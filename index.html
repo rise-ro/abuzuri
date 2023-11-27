@@ -1,0 +1,1436 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Harta abuz</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <link rel="icon" type="image/x-icon" href="https://raw.githubusercontent.com/mapbox/assembly/publisher-staging/src/svgs/mapbox.svg">
+    <script src="https://api.tiles.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.js"></script>
+    <link href="https://api.tiles.mapbox.com/mapbox-gl-js/v2.11.0/mapbox-gl.css" rel="stylesheet" />
+    <script src="https://unpkg.com/intersection-observer@0.12.0/intersection-observer.js"></script>
+    <script src="https://unpkg.com/scrollama"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto&display=swap" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: row;
+        }
+        #map {
+            height: 100vh;
+            width: 70%;
+        }
+        #panel {
+            font-family: Roboto;
+            width: 30%; /* Define the panel width */
+            background: rgba(255, 255, 255, 0.205); /* Transparent background */
+            overflow-y: auto;
+            max-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center content horizontally */
+            
+        }
+        /* Optional: Improve the scrollbar appearance */
+        #panel::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        #panel::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+
+        #panel::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Media query for tablets */
+        @media (max-width: 768px) {
+            #panel {
+                width: 100%; /* Make the panel full width */
+                position: fixed; /* Fixed position to stick atâthe bottom */
+                bottom: 0; /* Align to the bottom */
+                left: 0; 
+                max-height: 50vh;/* Align to the left */
+                overflow-y: auto; /* Override right positioning for desktop */
+                padding: 10px; /* Adjust padding as needed for smaller screens */
+            }
+        }
+
+        /* Media query for mobile phones */
+        @media (max-width: 480px) {
+            #panel {
+                width: 100%; /* Full width for small screens */
+                position: fixed; /* Fixed position to stick atâthe bottom */
+                bottom: 0; /* Align to the bottom */
+                left: 0; /* Align to the left */
+                max-height: 60vh; 
+                overflow-y: auto;/* Override right positioning for desktop */
+                padding: 5px; /* Less padding for very small screens */
+            }
+        }       
+
+        /* Add a media query for screens smaller than 768px */
+        @media (max-width: 768px) {
+            #map {
+                width: 100%; /* Map takes full width on smaller screens */
+                 /* Hide the map on smaller screens */
+            }
+            #panel {
+                width: 100%; /* Panel takes full width on smaller screens */
+            }
+        }
+            /* Custom marker style */
+            .custom-marker {
+            width: 30px;
+            height: 30px;
+            background-image: url('marker.png'); /* Reference the local image */
+            background-size: cover;
+            cursor: pointer;
+        }
+
+        #searchHints {
+            background-color: white;
+            border: 1px solid #ddd;
+            margin-top: 5px;
+        }
+
+        #searchHints li {
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        #searchHints li:hover {
+            background-color: #f0f0f0;
+        }
+
+        .legend-dot {
+            height: 10px;
+            width: 10px;
+            background-color: #bbb;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+
+    </style>
+</head>
+<body>
+    
+    <div id="map"></div>
+    <div id="panel">
+        <div>
+            <input type="text" id="searchInput" placeholder="Cauta..." oninput="updateSearchHints()">
+            <button onclick="searchAndNavigate(document.getElementById('searchInput').value)">Caută după localitate/școală</button>
+            <ul id="searchHints" style="list-style-type: none; padding: 0;"></ul>
+        </div>
+        <!-- Descriptive text before the toggle buttons -->
+        <p>Filtrează cazurile în funcție de sursa informației:</p>
+        <div>
+            <button onclick="toggleStatusMarkers('Toate')">Toate</button>
+            <button onclick="toggleStatusMarkers('Presa')"><span class="legend-dot" style="background-color: red;"></span> Presa</button>
+<button onclick="toggleStatusMarkers('Dosar penal + presă')"><span class="legend-dot" style="background-color: blue;"></span> Dosar penal + presă</button>
+<button onclick="toggleStatusMarkers('Dosar penal')"><span class="legend-dot" style="background-color: green;"></span> Dosar penal</button>
+            <!-- Add more buttons as needed for different statuses -->
+        </div>
+        <h2 id="markerTitle">Harta abuzurilor</h2>
+        <p id="markerDetails">Caută un caz de abuz după localitate sau instituția de învățîmânt. Folosește filtrele pentru a tria informația pe hartă</p>
+        
+        
+    </div>
+
+    <script>
+
+        var bounds = [
+            [20.261977, 43.64701], // Southwest coordinates
+            [29.68925, 48.265396]  // Northeast coordinates
+        ];
+        mapboxgl.accessToken = 'pk.eyJ1IjoicmlzZXByb2plY3QiLCJhIjoiY2xvbnlmN2hxMDJjajJpcGFpY3N0eXVqYSJ9.CJ6pVpf3rrchLrN7wffX0w'; // Replace with your Mapbox access token
+
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/riseproject/clpgy4avd00hd01qthc6u35pe', // Replace with your preferred Mapbox style
+            center: [24.96676, 45.943161], // Bucharest coordinates
+            zoom: 6,
+            maxBounds: bounds // Set your initial zoom level
+        });
+
+        // Create markers for multiple locations
+        const locations = [
+                
+                {
+                coordinates:  [ 27.57138553,47.17279112 ],
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Iași",
+                "Localitate":"Iași",
+                "Unitatea de învățământ a victimei":"Universitatea  Alexandru Ioan Cuza , Facultatea de Psihologie și Științe ale Educației",
+                "Anul faptei":"2016",
+                "Nume Profesor":"Constantin Petrovici, Didactica matematicii pentru învățământul primar, 69 de ani",
+                "Categorie abuz":"Condișionarea evalu?rii academice pentru acceptarea unei relații de natură sexuală",
+                "Acuzații":"Trafic de influență, fals intelectual, folosirea abuzivă a funcției in scop sexual",
+                "Vârsta victimelor":"Anul III de studii",
+                "Fapta":"Studenta nu promoveaz? examenul și îi spune pe mail profesorului că ar face orice, dacă mai există o posibilitate să schimbe nota. Profesorul se  nt lne?te cu ea în oraș, o invit? la el  n mașin?, o duce pe o strad? l?turalnică și  i d? de înțeles că  i poate modifica nota, dar  va trebui să facă și ea ceva . Ea îi oferă mită. El refuză. Când studenta îi spune că a înțeles greșit mesajul, profesorul îi răspunde că o lasă restant?. Fata  și anun?? p?rinșii, care o sf?tuiesc să anun?e poliția. Anchetatorii o echipeaz? cu un dispozitiv de  nregistrare și o sf?tuiesc cum să poarte discușia. I-a dat de înțeles profesorului că e dispusă să ofere favoruri de natură sexuală, iar el accept?.  i modifică nota  n catalog,  n urma promisiunii că vor avea relații sexuale. după ce promoveaz? examenul, fata nu îi mai răspunde la telefon. ",
+                "Locul faptei":" n fa?a locuin?ei profesorului",
+                "Reacția unității de învățământ":"Necunoscut?",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":" i deschide profesorului proces",
+                "Justiție":"Prima instanță decide în 2017 că profesorul nu și-a folosit abuziv funcția  n scop sexual, pentru că 1. nu a obșinut  ntr-un final niciun favor - nu a  ntreșinut relații sexuale cu studenta și 2. nu ar fi pretins a?a ceva. Inișiativa ar fi aparșinut studentei, care ar fi înțeles greșit că el ar vrea favoruri sexuale. Ea ar fi provocat discușiile dintre cei doi, după ce și-a anun?at p?rinșii. Insisten?a ei ar fi determinat reacăia profesorului. La apel, în 2018, Instanța arată că profesorul a acceptat o promisiune pe care nu a pretins-o, faptă care nu este pedepsit? de lege. Condamnat definitiv la 2 ani de închisoare cu suspendare și 60 de zile de muncă în folosul comunității pentru fals intelectual, pentru că i-a modificat studentei nota în catalog. Nu are voie să fie profesor timp de 2 ani.",
+                "Ce face abuzatorul în prezent/Declarație abuzator":" ncă apare pe site-ul universității, de verificat daca in prezent este profesor acolo sau cand a incetat sa mai fie, daca s-a pensionat. ",
+                "Alte victime":"-"
+                }
+            },
+
+            {  
+                
+                coordinates:  [ 26.7182058,47.2462882 ],
+        
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Iași",
+                "Localitate":"Pașcani",
+                "Unitatea de învățământ a victimei":"Colegiul Nașional Mihail Sadoveanu",
+                "Anul faptei":"2017",
+                "Nume Profesor":"Anghelu? Petrică, profesor de sport, 65 de ani",
+                "Categorie abuz":"Stalking",
+                "Acuzații":"H?r?uire",
+                "Vârsta victimelor":"Clasa a 11-a",
+                "Fapta":"Profesorul aude dintr-un  zvon public  că OA se prostituează și o sună de mai multe ori să-i ceară servicii sexuale,  n schimbul unor bunuri materiale. când ea refuză, o insultă și o umilește:  nesimșită ,  producătoare  și  pocnitoare . Ea recunoa?te cine este după voce,  l amenin?? cu poliția, el  i spune:  nu mai pot de frică poate te dau eu  n g t . Zilele urm?toare  ncepe să o urm?rească prin campus. n fa?a procurorilor, profesorul spune că a vrut  să realizeze un important și brav act de Justiție morală și socială , aducând-o pe elevă pe drumul corect de la prostitușie, apoi recunoa?te că i-a cerut favoruri sexuale și motivează fapta cu  o stare de hiperexcitabilitate . ",
+                "Locul faptei":" n campus",
+                "Reacția unității de învățământ":"Victima anun?? conducerea școlii, care   n aprecierea instan?ei , nu ia măsuri corespunz?toare fa?? de gravitatea faptei - prob?  nregistrare audio.",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"",
+                "Justiție":"3 luni închisoare cu suspendare, pentru h?r?uire si interzicerea dreptului de a exercita profesia de profesor, de care s-a folosit la săv rșirea infracăiunii, pe o durat? de 2 ani. n apel, daunele morale scad de la 20 la 10 000 de lei. Victima ceruse 100 000.  Este profund inadmisibil ( ), nimeni nu are dreptul sub nicio justificare, mai ales  n calitate de profesor, să  ndr?znească să-și umilească și batjocorească verbal eleva care  i cere  n mod repetat să o lase  n pace. Profesorul a mai fost sancăionat de școală pentru că a cerut bani elevilor și părinților de la clasa la care era diriginte,  n 2014, dar a contestat decizia în instanță și a câștigat. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"",
+                "Alte victime":""
+                }
+            },
+
+
+
+            { 
+                    
+                coordinates:  [ 26.39520645,46.92029572 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Neamț",
+                "Localitate":"Piatra Neamț",
+                "Unitatea de învățământ a victimei":"Liceul Tehnologic  Dimitrie Leonida , Piatra Neamț",
+                "Anul faptei":"2020",
+                "Nume Profesor":"Pipirigeanu Cristian-Constantin, profesor de matematică",
+                "Categorie abuz":"",
+                "Acuzații":"H?r?uire",
+                "Vârsta victimelor":"21 de ani",
+                "Fapta":"Profesorul a început să  i dea elevei mesaje pe WhatsApp și pe Facebook. I-a cerut fotografii nud, iar când ea a refuzat, el a început să o jignească, a făcut-o  handicapată curvă, jigodie ordinară, cățea în călduri , iar apoi a început să o intimideze și să  îi spună că are relații în Justiție și că nu poate să fie tras la răspundere.  Sunt strănepot de judecător, frate de grefier, iubitul unei persoane din Justiție, frate de polișistî , i-a scris profesorul.",
+                "Locul faptei":"Online",
+                "Reacția unității de învățământ":"Profesorul și-a dat demisia de la Liceul Tehnologic, iar alte două școli la care lucra au decis să  îl concedieze. Directoarea liceului a spus că și eleva a greșit și că  e ciudat  că eleva s-a  nscirs la o clasă de bșieși, lucru care  nu s-ar potrivi cu sexul  fetei. și a sugerat că ar fi trebuit să se  nscrie la un profil de textile, mai potrivit pentru  viitorul profesional al unei tinere . ",
+                "Reacție politică":"Directoarea adjunctă Mihaela Zachman a fost destituit? din funcție, iar profesorul Pipirigeanu a intrat  în cercetare disciplinară, timp  n care nu a predat. măsurile au fost anunțate de ministrul Educației la Digi TV. - RISE Project",
+                "Reacția poliției":"poliția a demarat o anchet? pentru faptele profesorului, dar dosarul a fost clasat.",
+                "Justiție":"în prima instanță, tribunalul i-a dat dreptate profesorului și a justificat că  fapta nu s-a petrecut  n spașiile destinate Educației , că profesorul n-a avut alte abateri disciplinare și că nu a hărțuit și elevi de la celelalte două școli care-l concediaser?. Tribunalul Neamț a spus că eleva a dat conversașiile pe care le-a avut cu profesorul  n presă fără să aib? acordul acestuia, lucru care ar fi afectat atât imaginea profesorului, c t și imaginea școlii.  n motivare, magistrașii de la Tribunalul Neamț au criticat educașia sexuală, despre care au zis că  și propune să  i  nve?e pe copiii de 0-4 ani  tehniciile masturb?rii  și au decis  nlocuirea deciziei de concediere cu diminuarea salariului cu 15% pentru 6 luni. Au obligat școlile să  i plătească profesorului desp?gubiri  n valoarea salariilor pe care nu le-a primit de când a fost concediat. Curtea de Apel Bacău a admis, însă, apelul făcut de Școala gimnazială Nr. 1 Dumbrava Roșie și de Școala gimnazială  Regina Maria  Bicaz și a menșiunut deciziile de concediere.",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Nu mai lucreaz?  n educașie.",
+                "Alte victime":""
+                }
+            },
+
+            { 
+                    
+                coordinates:  [ 21.8997609,45.6852469 ],
+               
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Timiș",
+                "Localitate":"Lugoj",
+                "Unitatea de învățământ a victimei":"Școala gimnazială Nr. 6  Ani?oara Odeanu  Lugoj",
+                "Anul faptei":"2016",
+                "Nume Profesor":"Ion Deliu, profesor de tehnologie, 63 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Folosirea abuzivă a funcției  n scop sexual",
+                "Vârsta victimelor":"15 ani",
+                "Fapta":" n februarie 2016, profesorul de tehnologie a fost  nregistrat de o elevă în timp ce  i propunea o  poveste frumoasă, o relație . Eleva  i spunea profesorului că o relație dintre ei ar fi anormal?,  n primul r nd pentru că acesta este căsătorit și pentru că e o diferen?? foarte mare de vârstă. Profesorul a insistat și a spus că nu contează vârsta, ci că e important să  ai suflet să simși, ochi să vezi  și că  dacă omul face numai ce este normal via?a devine plictisitoare.  Profesorul  i spunea minorei că este  deosebit? ,  discret?  și că are  feminitate , ca apoi să  îi spună că are o amant? care e student?  n Timișoar?, dar că el nu caut?  o amant? , ci  amanta , și că eleva de 15 ani are  toate calit?șile astea și când vezi minunea asta, la 15 ani, că ai tot ce caut? un b?rbat, asta este de neimaginat . ",
+                "Locul faptei":"neclar",
+                "Reacția unității de învățământ":"Dana Tipei, directoarea școlii:  Nici nu s-a terminat  nregistrarea, am și anun?at Inspectoratul Școlar că avem o problem? grav?. Era o discușie care  n niciun caz nu poate avea loc cu o feti?? de 15 ani. (...) Legal, nu, eu pot lua măsuri doar dacă există pl ngeri. Da, au mai existat zvonuri.",
+                "Reacție politică":"PSD Timiș: Clasarea dosarului  n care era cercetat profesorul Ion Deliu a st rnit, pe bun? dreptate, indignare  n familia care a reclamat presupusele acte comise de cadrul didactic din Lugoj. Un astfel de caz, amplu mediatizat de presă, aduce traume serioase unui copil și grave prejudicii de imagine sistemului de învățământ. Faptul că un cadru didactic are un astfel de comportament este absolut condamnabil, institușiile abilitate pentru rezolvarea acestei spe?e au fost sesizate, iar rezultatul anchetei este unul care nemul?ume?te una dintre p?rși. însă implicarea Partidului Social Democrat  n tot acest scandal este lipsit? de fond și nu are niciun corespondent  n realitate.cercetările judiciare ale poliși?tilor și procurorilor nu au component? politică, un partid politic nu se implică  ntr-o astfel de anchet?, iar menșionarea PSD  n tot ceea ce s-a  nt mplat este tendenșioasă.  ncă de la început, Partidul Social Democrat s-a delimitat de Ion Deliu, de presupusele sale acăiuni și a condamnat, la vremea respectiv?, ceea ce se presupunea că s-a  nt mplat.  ",
+                "Reacția poliției":"Procurorii au clasat dosarul",
+                "Justiție":"Procurorii au clasat dosarul, iar profesorul a cerut anularea deciziei de  ntrerupere a contractului. Tribunalul a respins cererea făcut? de Deliu pentru că a formulat contestașia la mai mult de 30 de zile de când a primit decizia de desfacere a contractului. Curtea de apel a menținut sentin?a. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":""
+                }
+            },
+
+
+
+            {
+                
+                
+                
+                coordinates:  [ 26.6571583,45.1388982 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Buzău",
+                "Localitate":"Merei",
+                "Unitatea de învățământ a victimei":"Școala gimnazială Merei",
+                "Anul faptei":"2021",
+                "Nume Profesor":"?tefan Nedelcu, profesor de biologie, 56 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Agresiunea sexuală",
+                "Vârsta victimelor":"Clasa a VI-a",
+                "Fapta":"după ora de biologie, profesorul a rămas singur în sala de curs cu o elevă de clasa a VI-a. A  nchis u?a, a luat-o  n bra?e, i-a dat masca jos și a sărutat-o pe gur?. ",
+                "Locul faptei":"Sala de clasă",
+                "Reacția unității de învățământ":"Directoarea școlii a demisionat, dar a spus că:  Dragi colegi,  ncep nd cu data de 14.07 mi-am dat demisia, și nu din cauzele menșionate in articolul respectiv ci ca trebuie sa  mi v?d de săn?tatea mea care e mai importanta dec t orice alt lucru! ",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Instanța l-a condamnat la 3 ani de închisoare cu suspendare, la 90 de zile de muncă în folosul comunității  n cadrul primăriei Cochirleanca și la frecventarea unui program de reintegrare socială derulat de serviciul de probașiune. Judecătorii au considerat că profesorul poate să fie reabilitat, dar că acesta nu con?tientizeaz? impactul pe care l-a avut asupra victimei",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Are o școală de dans pentru copii în Buzău",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 26.3139841,44.1691888 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Giurgiu",
+                "Localitate":"Izvoarele",
+                "Unitatea de învățământ a victimei":"Școala gimnazială Nr. 1 Izvoarele",
+                "Anul faptei":"2017-2019",
+                "Nume Profesor":"Anton Gheorghe, profesor de TIC, 69 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Act sexual cu un minor",
+                "Vârsta victimelor":"Clasa a VII-a",
+                "Fapta":"Profesorul de TIC a agresat-o sexual timp de trei ani pe o minor? care i-a fost elevă, din clasa a 6-a și p n? când fata a ajuns la liceu. Profesorul vorbea cu eleva prin mesaje, prin video-call și o lua cu mașina p n? la marginea unui c mp din comună ca să întrețină relații sexuale. Eleva a spus că a  ntreșinut relații sexuale orale cu profesorul din 2017 p n?  n 2019, de fiecare dat?  n mașina lui, la marginea unui c mp din localitate. Profesorul de 66 de ani vorbea prin video-call cu minora și a făcut mai multe screenshoturi cu fata  n ipostaze pornografice. A declarat că eleva a fost cea care a insistat să întrețină relații sexuale și că  ntre cei doi a fost  o pasiune reciprocă . ",
+                "Locul faptei":"mașina agresorului",
+                "Reacția unității de învățământ":"Claudia Duțu, directoarea școlii din Izvoarele: Nu a mai solicitat ore la noi la școală din septembrie. Nu am b?nuit nimic. Domnul profesor era a?a mai slobod  n limbaj să spunem, dar nu am b?nuit că s-ar putea  nt mpla a?a ceva.",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"",
+                "Justiție":"Condamnat în primă instanță la 5 ani și 8 luni de închisoare și interzicerea dreptului de a fi profesor timp de 5 ani după executarea pedepsei. după apel, pedeapsa a fost redusă la 4 ani și 2 luni și interzicerea dreptului de a profesa ca profesor timp de 5 ani după executarea pedepsei. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"în închisoare",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 27.5762255,47.1708829 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Iași",
+                "Localitate":"Iași",
+                "Unitatea de învățământ a victimei":"Palatul Copiilor Iași",
+                "Anul faptei":"2022",
+                "Nume Profesor":"Cordineanu Alexandru Bogdan, profesor de desen, 50 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Viol",
+                "Vârsta victimelor":"15 ani",
+                "Fapta":"Profesorul de desen coordonator de la Palatul Copiilor Iași, rămas singur  n Clubul Copiilor cu o elevă de 15 ani, a for?at-o să consume alcool și să fumeze, iar când fata a ajuns  ntr-o stare vulnerabil?, a agresat-o sexual. Profesorul a luat-o pe fat?, a pus-o pe un birou, a dezbr?cat-o și a început să o masturbeze.  nainte să fie violat?, fata a simșit că este  n pericol și l-a sunat pe prietenul ei, care a auzit conversașia dintre cei doi, și-a dat seama că partenera lui e  n pericol și s-a dus la Palatul Copiilor, unde l-a prins  n flagrant pe profesor.  n discușiile dintre ea și prietenul ei, fata spunea că profesorul i-a spus că o să o ajute să ajung? la facultate și o să  i ofere un job de profesoară. Mai multe foste eleve ale lui Cordineanu le-au dat anchetatorilor screenshoturi din 2017  n care profesorul de desen le f?cea avansuri cu tent? sexuală. ",
+                "Locul faptei":"Clubul Copiilor",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Inspectoratul Școlar din Iași i-a suspendat contractele de profesor și de ?ef al Clubului Copiilor din H rl?u.",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Condamnat în prima instanță la 4 ani și 8 luni de închisoare cu executare. I s-a interzis să se apropie de victimă și să fie ales  n autorit?șile publice sau  n orice funcție publică, dar nu i s-a interzis să fie profesor. Cordineanu a făcut apel, dar sentin?a a fost menținut? de Curtea de Apel. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"în închisoare",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 23.58333,46.06667 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Alba ",
+                "Localitate":"Alba Iulia",
+                "Unitatea de învățământ a victimei":"Școala  Vasile Goldiș ",
+                "Anul faptei":"2017-2018",
+                "Nume Profesor":"Oarg? Vasile, profesor de sport, 64 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Corupere sexuală a minorilor",
+                "Vârsta victimelor":"Clasa a VI-a",
+                "Fapta":"În timpul orelor, profesorul de sport a agresat mai multe minore de clasa a VI-a. Le-a  mbr?și?at, le-a mângâiat  n zonele intime, iar uneia dintre ele i-a spus că  nu a mai m ncat de mult o puicu??  și a  ntrebat-o dacă  se rade sau se epileaz? acolo jos . ",
+                "Locul faptei":"Sala de sport",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Profesorul a fost condamnat la 2 ani și 3 luni de închisoare cu suspendare  n primă instanță pentru corupere sexuală a minorilor, iar acum se judecă apelul.",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 27.3248796,44.3304775 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Călărași",
+                "Localitate":"Călărași",
+                "Unitatea de învățământ a victimei":"Școala gimnazială nr. 7 Călărași și Școala gimnazială Nr.1 com. ?tefan Vod?",
+                "Anul faptei":"2020-2021",
+                "Nume Profesor":"Ene Florin, profesor de georgrafie, 53 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Trafic de minori",
+                "Vârsta victimelor":"15 ani",
+                "Fapta":"Prima victimă s-a cunoscut cu profesorul după ce acesta a urm?rit-o cu mașina și a insistat să iasă la cafea. Victima i-a povestit că e  ntr-o situașie precar? și că riscă să r?m n? fără lumin?, gaz și ap? curent?. când i-au fost tșiate utilit?șile, minora s-a mutat  n chirie la profesor și acesta i-a spus că trebuie să întrețină relații sexuale ca să o primească. Victima a cedat și a fost abuzat? sexual de profesor timp de câteva luni, p n? când a refuzat, iar acesta a devenit violent și a for?at-o să se taie cu lama pe m ini, lucru pe care l-a filmat. După incident fata s-a mutat de la profesor și  n locul ei a venit altă minoră, împreună cu mama ei, pe care a cunoscut-o prin intermediul unui elev de-al său și căreia i-a spus că poate să o cazeze în oraș ca să nu mai facă naveta de la țară. A abuzat-o sexual și apoi a forțat-o să se prostitueze. ",
+                "Locul faptei":"Garsoniera profesorului",
+                "Reacția unității de învățământ":"Directoarea școlii din comuna ?tefan Vod?, Floren?a Dincă:  Pred? la gimnaziu. E calificat, are jum?tate de catedră la noi și jum?tate de catedră la Școala Carol I, din Călărași.  Nici nu ?tiam că este cu cineva. Nu am auzit absolut nimic. Din c te știm noi, ca și colegi din școală, știm că nu era  nsurat. nicidată nu am avut discușii de acest tip. ",
+                "Reacție politică":"Raluca Maria Caraion, Inspectoratului Școlar Județean Călărași: Nu avem foarte multe de spus. Am vorbit și la Carol, am vorbit și cu directoarea de la ?tefan Vod?.  mi spun același lucru despre profesor: că n-au fost probleme, n-a lipsit nicidată, nu a creat nici un fel de probleme  n cele două școli. Nu-și explică de ce este situația asta. ",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Prima instanță l-a condamnat la 8 ani de închisoare și i-a interzis să ocupe vreo funcție publică pentru 5 ani de la executarea pedepsei. Parchetul a formulat apel, iar Curtea de Apel i-a majorat pedeapsa la 10 ani de închisoare. Judecătorii Curșii de Apel au motivat majorarea pedepsei pentru că profesorul a profitat de  persoane minore extrem de vulnerabile, aspect care relevă gradul de degradare morală  n care acesta se afl?  și au menșionat că inculpatul e  o persoan? lipsit? de orice scrupule și repere morale  care pune mai presus de orice  comportamentul său sexual deviant .",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"în închisoare",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 23.3990307,45.9076926 ],
+                
+                details: {
+                "Status":"Dosar penal + presă",
+                "Județ":"Alba ",
+                "Localitate":"Săliștea",
+                "Unitatea de învățământ a victimei":"Școala gimnazială  David Prodan  din comuna Săliștea",
+                "Anul faptei":"2018-2019",
+                "Nume Profesor":"David Angela Elena, profesoară de engleză, 39 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Act sexual cu un minor",
+                "Vârsta victimelor":"14 ani",
+                "Fapta":"Profesoara a făcut sex cu elevul său minor de 14 ani de mai multe ori în perioada 2018-2019. Profesorii din Școala la care preda au aflat că un elev deține fotografii pornografice cu profesoara și au sesizat poliția din Alba Iulia. ",
+                "Locul faptei":"Necunoscut",
+                "Reacția unității de învățământ":"Ionela Gabriela Suciu, directoarea școlii:  Eu personal nu am g?sit nicio poz?, dar am aflat că unul dintre elevii no?tri deține poze compromi??toare cu una dintre profesoarele noastre. Am informat Inspectoratul Școlar și poliția din săli?tea și am făcut o sesizare la poliția din Alba Iulia. Sesizarea a fost făcut? de către mine, cu acordul Inspectoratului Școlar , a spus directoarea unității de învățământ. Era o profesoară foarte bună, foarte atașată de copii, copiii foarte atașați de ea. Nu mi-am imaginat nicidată că s-ar putea  nt mpla a?a ceva. Nu mai lucreaz?  n învățământ acum, pentru că și-a dat demisia. Nu ?tiu detalii referitoare la  nt lnirile lor, dar cu siguran?? nu au avut loc  n școală ",
+                "Reacție politică":"Inspectorul Școlar al I?J Alba, Monalisa Borza:  Doamna profesoară este titular al sistemului de învățământ, are o vechime de 10 ani. Preda la clasa unde era elevul. Nu am știință ce s-a întâmplat, nouă ni s-a adus la cunoștință doar că există acele poze compromi??toare. Din ce am fost informași nu rezult? ca ar fi recunoscut că a  ntreșinut relații sexuale cu elevul. Regret?m că există astfel de persoane cu comportament deviant  n r ndul celor care asigur? educașie elevilor no?tri. Prioritate pentru noi este, acum, asigurarea suportului psihologic elevului și familiei sale pentru a dep?și momentele grele prin care au trecut. Doamna profesoară a trecut testul psihologic  n luna septembrie 2018 .",
+                "Reacția poliției":"Cristian Mărginean, IPJ Alba:  poliția s-a sesizat din oficiu,  n urma unor informașii primite din comună, că profesoara,  n vârstă de 35 de ani, ar fi  ntreșinut relații sexuale cu un elev  în vârstă de 14 ani.   ",
+                "Justiție":"A făcut un acord de recunoa?tere a vinov?șiei și a fost condamnat? la 2 ani de închisoare cu suspendare și la prestare a muncii în folosul comunității la Spitalul din Alba Iulia sau la primăria Ciugud. I s-a interzis să fie aleasă  n funcăii publice.",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 28.3720744,44.8800473 ],
+                
+                details: {
+                "Status":"Dosar penal + presă",
+                "Județ":"Tulcea",
+                "Localitate":"Topolog",
+                "Unitatea de învățământ a victimei":"Liceul Tehnologic Topolog",
+                "Anul faptei":"2020",
+                "Nume Profesor":"Almaghe Alexandru Mihai, profesor de sport, 32 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Act sexual cu un minor",
+                "Vârsta victimelor":"14 ani și 13 ani",
+                "Fapta":"Timp de mai multe luni, profesorul de sport și-a violat mai multe eleve. Mama uneia dintre victime a povestit că profesorul a luat-o pe fiica ei cu mașina, a dus-o pe un c mp de l ng? localitate și a violat-o, apoi a amenințat-o că o să o p rască părinților dacă nu continu? să întrețină relații sexuale cu el. Profesorul le trimitea minorelor fotografii nud și vorbea cu ele pe Facebook,  ncercând să le conving? să se  nt lnească cu el. ",
+                "Locul faptei":"mașina agresorului",
+                "Reacția unității de învățământ":"Virginia Ciobanu, directoarea Liceului Tehnologic Topolog:  Nu ?tiam, nu am auzit niciun p?rinte, niciun elev nu mi-a adus la cunoștință a?a ceva. Nu a? fi tolerat un asemenea gest sau comportament. ",
+                "Reacție politică":"Viorica Pavel, ISJ Tulcea:  Reclamașii la adresa domnului profesor nu au fost. Eu ?tiu că dumnealui era un cadru didactic competent, implicat  n activit?șiile de la clasă, nu au fost nicidată sesiz?ri  n ceea ce prive?te relașia dumnealui sau un alt tip de relație profesor-elev. ",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Condamnat în prima instanță la 13 ani și 4 luni de închisoare; i s-a interzis să fie ales  n funcăii publice, i s-au interzis drepturile p?rinte?ti, dreptul de a fi tutore sau curator și i s-a interzis să se apropie de victime. Instanța le-a acordat victimelor daune morale de 650.000 lei. A făcut apel, dar acesta a fost respins. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"în închisoare",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 27.5851369,47.1644531 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Iași",
+                "Localitate":"Iași",
+                "Unitatea de învățământ a victimei":"Colegiul Nașional de Art?  Octav B?ncil? ",
+                "Anul faptei":"2020",
+                "Nume Profesor":"Parascan Silviu Andrei, profesor de desen, 34 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Tentativ? la pornografie infantil?",
+                "Vârsta victimelor":"10 ani, 9 ani, 9 ani",
+                "Fapta":"Profesorul de desen și-a făcut un cont fals de Facebook și le-a cerut mai multor minore fotografii nud cu ele. El pretindea că este o fat?,  ncerca să se  mprietenească cu minorele și le promitea că o să le trimită și el fotografii nud dacă și ele vor proceda la fel. Parascan le suna pe minore și  și subșia vocea ca să le facă să prind? mai mult?  ncredere  n el, iar uneia dintre ele i-a promis că o să  i dea 250 de euro dacă  i trimite o fotografie cu ea dezbr?cat?. ",
+                "Locul faptei":"Facebook",
+                "Reacția unității de învățământ":"Directorul Colegiului, Gheorghe Gheorghiță-Vornicu:  Habar nu am despre ce  mi spuneși. Da, după nume este profesorul nostru, dar nu am ?tiut de o asemenea chestiune. A avut tot felul de inspecăii, dar nu a avut nicidată vreo problem?. Este un om deosebit, foarte cuminte, la locul lui, un bun profesionist, doar lucruri bune pot fi spuse despre el. Poate e o coinciden?? de nume  Pfu, ce treab?  ",
+                "Reacție politică":"ISJ Iași:  Am luat act de informașia transmisă de dumneavoastr? și, în condițiile în care hotărârea va rămâne definitivă, angajatorul, adică unitatea de învățământ, va lua măsurile legale care se impun.  n limita competen?elor legale, Inspectoratul Școlar Județean Iași monitorizeaz? situația și consiliaz? conducerea școlii. Din informașiile pe care le avem, domnul profesor  și continu? activitatea. P n?  n acest moment, nu există o informare oficial? referitoare la situația menșionat? ",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"A semnat cu procurorii un acord pentru recunoa?terea vinov?șiei și a fost condamnat la 1 an și 10 luni de închisoare cu suspendare și obligat să presteze muncă în folosul comunității la Consiliul Local Iași. Nu i s-a interzis să fie profesor. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"E artist și are mai multe expozișii și vernisaje  n Iași și București.",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 26.6480466,47.7365143 ],
+                
+                details: {
+                "Status":"Dosar penal + presă",
+                "Județ":"Botoșani",
+                "Localitate":"Botoșani",
+                "Unitatea de învățământ a victimei":"Liceul cu Program Sportiv Botoșani",
+                "Anul faptei":"2019",
+                "Nume Profesor":"Mreana Cristian, profesor de lupte greco-romane, 53 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Viol",
+                "Vârsta victimelor":"15 ani",
+                "Fapta":"O elevă de 15 ani s-a dus la profesorul de sport ca să primească o adeverin?? de care avea nevoie ca să se transfere. Profesorul a început să vorbească cu ea, a  ncercat să o conving? să nu se transfere și apoi i-a spus că o să o ajute cu transferul. Profesorul, care se cuno?tea cu mama elevei, i-a propus să o ducă cu mașina p n? la serviciul femeii. Fata a acceptat, dar profesorul a dus-o la marginea orașului, l ng? o p?dure, unde a violat-o. ",
+                "Locul faptei":"mașina agresorului",
+                "Reacția unității de învățământ":"Ioan Huncă, directorul LPS Botoșani:  De când este profesor  n cadrul liceului nu au existat pl ngeri sau nemul?umiri cu privire la activitatea lui ",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Maria Carp, purt?tor de cuv nt IPJ Botoșani:  Sesizarea la polișie a fost  nregistrat? pe data de 5 septembrie. Se efectueaz? activit?și investigative specifice sub aspectul comiterii infracăiunii de viol  n vederea lu?rii măsurilor legale. Dat? fiind vârsta victimei, nu v? putem oferi mai multe detalii ",
+                "Justiție":"Condamnat la 7 ani de închisoare pentru viol și la plata a 15.000 de euro daune morale și la cheltuieli judiciare pentru victimă. Timp de 4 ani, profesorul nu are voie să ia leg?tura sau să se apropie de elevă la o distan?? mai mică de 100 de metri. Nu va mai avea voie să lucreze  n învățământ și nici  n domenii de activitate care presupun contactul cu copii sau persoane v rstnice. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"în închisoare",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 22.7579046,46.4762447 ],
+                
+                details: {
+                "Status":"Dosar penal + presă",
+                "Județ":"Alba ",
+                "Localitate":"Arieșeni",
+                "Unitatea de învățământ a victimei":"Liceul Tehnologic de Turism și Alimentașie din Arieșeni",
+                "Anul faptei":"2017",
+                "Nume Profesor":"Gligor Traian, profesor de religie, peste 50 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Act sexual cu un minor",
+                "Vârsta victimelor":"16 ani",
+                "Fapta":"Profesorul de religie a lăsat-o însărcinată pe o elevă de 16 ani după ce a violat-o  ntr-o camer? din internatul liceului. Școala a demarat o anchet?, dar au stabilit că profesorul e nevinovat și au  nchis cazul, dar nu a anun?at nici ISJ și nici DGASPC. Fata era institușionalizat?  ntr-un centru de plasament, a n?scut copilul și l-a plasat  n grija unui asistent maternal. ",
+                "Locul faptei":"O camer? de internat",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Primarul Marin Jurj:  E foarte urât ce s-a întâmplat. Se pare că ar fi o certitudine. Nu ?tiu când s-a  nt mplat exact, dar a fost ceva scandal la școală anul trecut, s-a făcut o comisie și am înțeles că s-au a?teptat rezultatele de la test. La noi  ncă nu a ajunsânimic oficial, dar lui i-ar fi venit și se pare că a ieșit că este tatăl copilului. Fata era crescută la casa de copii din Târsa, comuna Avram Iancu, nu locuia la noi în comună. Nici acum nu locuie?te aici, nu ?tiu exact unde este acum. Ea nu a făcut reclamașie la polișie nici anul trecut și am înțeles că testul de paternitate a fost cerut și făcut când a fost luat copilul  n plasament. Noi nu vrem, sub nicio form?, să mu?amaliz?m cazul.  n momentul  n care vom primi, oficial, rezultatul testului de paternitate, se vor lua măsuri prin consiliul de administrașie al școlii ",
+                "Reacția poliției":"poliția a deschis o anchet?.",
+                "Justiție":"Condamnat  n primă instanță la doi ani de închisoare cu suspendare pentru act sexual cu un minor. Instanța i-a interzis să ocupe funcăii publice sau să fie profesor pentru doi ani de la executarea pedepsei și l-a obligat să plătească 10.000 de lei către familia victimei. Familia victimei a făcut apel  mpotriva sentinței, dar apelul a fost respins. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Promoveaz? pe Facebook servicii foto-video",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 26.167727,44.3794524 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Ilfov",
+                "Localitate":"Popești Leordeni",
+                "Unitatea de învățământ a victimei":"Școala nr. 1 din Popești Leordeni (acolo preda profesorul)",
+                "Anul faptei":"2018",
+                "Nume Profesor":"Marin Filionescu, profesor de matematică, 78 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Agresiune sexuală",
+                "Vârsta victimelor":"14 ani ",
+                "Fapta":"Profesorul de meditații pensionar a agresat sexual o elevă de 14 ani. În timpul ședinței de meditații, profesorul i-a arătat elevei mai multe conversașii cu tent? sexuală și fotografii cu fete dezbrăcate în camera de meditații. După ce s-a terminat ședința, a început să o sărute pe elevă și să o atingă pe sâni, iar la final i-a cerut să îi trimită fotografii nud. ",
+                "Locul faptei":"Casa profesorului",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"poliția local? a sf?tuit-o pe mama victimei să caute singură și Alte victime. Mama a postat pe Facebook și a primit mai multe mărturii. ",
+                "Justiție":"Condamnat la 7 ani de închisoare în primă instanță. La apel, sentin?a a fost redusă la 3 ani de închisoare cu suspendare. Profesorul trebuie să plătească daune morale de 40.000 de lei victimei. Judecătorii au argumentat că profesorul este bătrân și nu are antecedente penale. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":"Alte 5 foste eleve"
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 25.75,47.58333 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Suceava",
+                "Localitate":"Todirești",
+                "Unitatea de învățământ a victimei":"Școala gimnazială Todirești",
+                "Anul faptei":"2022",
+                "Nume Profesor":"Chiselita Dragomir Vicentiu, profesor de muzică și biologie, 60 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Agresiune sexuală",
+                "Vârsta victimelor":"14 ani",
+                "Fapta":"Profesorul de muzică a agresat sexual o elevă de 14 ani. A for?at-o să se ridice din bancă, a început să danseze cu ea și i-a pus m na pe fund de mai multe ori. Profesorul i-a făcut avansuri sexuale și a fost înregistrat de către victimă.",
+                "Locul faptei":"școală",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"ISJ Suceava a deschis o anchet?.  Situașiile sunt foarte grave, atât  n cazul domnului Chiseliță Vicenșiu Dragomir, c t și  n cazul doamnei Maria Podolac (alt caz de la altă școală), ambii profesori fiind arestați pentru 30 de zile. Sunt două fapte condamnabile, practic de neînțeles,  n care poliția și procuratura  și vor exercita atribuțiile, anchetele fiind în curs de desf??urare. Echipe de control ale Inspectoratului Școlar vor realiza anchete la sediul celor două unit?și de învățământ în cursul săpt?m nii viitoare. Vor fi verificate și examenele psihologice susșinute de către cei doi profesori la începutul anului Școlar. De asemenea, la nivelul școlilor vor fi realizate cercetări de către comisiile de disciplin? .",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Instanța urmează să se pronunțe. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 26.6565336,47.7433387 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Botoșani",
+                "Localitate":"Ștefănești",
+                "Unitatea de învățământ a victimei":"Liceul Teoretic  ?tefan Luchian ",
+                "Anul faptei":"2022",
+                "Nume Profesor":"Calin Stroe, profesor de agricultură, 48 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Corupere sexuală a minorilor",
+                "Vârsta victimelor":"15 ani",
+                "Fapta":"Profesorul de agricultură a agresat un elev de 15 ani, l-a m ngaiat pe corp, l-a  mbr?și?at și l-a sărutat pe obraz. Procurorii au film?ri, ",
+                "Locul faptei":"școală",
+                "Reacția unității de învățământ":" La nivelul unității noi nu avem o sesizare  n acest caz. Nu avem cum să facem noi o comisie de disciplin?, având în vedere că este  atențiapoliției, l?săm poliția să  și facă treaba. în consiliul de administrație i s-a aprobat domnului profesor cererea de concediu fără  plată pe timpul desfășurării anchetei, dar nu mai mult de un an de zile. Nu putem ancheta un om din două p?rși , a spus profesoara Veronica Chiaburu, directoarea Liceului Ștefănești.",
+                "Reacție politică":"",
+                "Reacția poliției":"poliția a deschis o anchet?. ",
+                "Justiție":"Instanța urmează să se pronunțe. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 28.0549395,45.4338215 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Galați",
+                "Localitate":"Galați",
+                "Unitatea de învățământ a victimei":"Necunoscut",
+                "Anul faptei":"2019",
+                "Nume Profesor":"Agache Puiu, profesor de matematică, 66 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Agresiune sexuală",
+                "Vârsta victimelor":"14 ani",
+                "Fapta":"În timpul meditațiilor, profesorul de matematică și-a agresat sexual eleva de 14 ani. A atins-o și mângâiat-o pe sâni și pe coapse, profit nd de  pozișia ascendent? morală și intelectual? asupra minorei . Profesorul și-a recunoscut fapta, dar dosarul  ncă se judecă.",
+                "Locul faptei":"Casa profesorului",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Instanța urmează să se pronunțe. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 23.2782499,45.0437205 ],
+                
+                details: {
+                "Status":"Dosar penal + presă",
+                "Județ":"Gorj",
+                "Localitate":"Târgu Jiu",
+                "Unitatea de învățământ a victimei":"Colegiul de Arte  Constantin Brșiloiu ",
+                "Anul faptei":"2015",
+                "Nume Profesor":"Cosmin Oproiu, profesor de economie și educașie antreprenorial?, 40 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Act sexual cu un minor",
+                "Vârsta victimelor":"12 ani",
+                "Fapta":"Profesorul de logică a abuzat sexual o minor? de 12 ani. Vorbea cu ea pe Facebook și se  nt lneau  n scări de bloc și  n locuri publice, acolo unde o viola. ",
+                "Locul faptei":"Locuri publice",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"ISJ Gorj i-a suspendat contractul de muncă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"A fost condamnat la 2 ani de închisoare cu suspendare, dar la apel pedeapsa a fost schimbat?  n 5 ani de închisoare cu executare. A ajuns în penitenciar  în noiembrie 2017 și în februarie 2020 a fost eliberat condiționat. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 28.7863296,45.1774771 ],
+                
+                details: {
+                "Status":"Dosar penal + presă",
+                "Județ":"Tulcea",
+                "Localitate":"Tulcea",
+                "Unitatea de învățământ a victimei":"Școala General? nr. 12 și Școala General? nr. 1",
+                "Anul faptei":"2017",
+                "Nume Profesor":"Lucian ?erb?nică, profesor de muzică, 37 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Pornografie infantil? și ?antaj",
+                "Vârsta victimelor":"13 ani",
+                "Fapta":"Profesorul de muzică și-a făcut un cont fals și i-a cerut unei eleve de clasa a VI-a mai multe poze nud, pretinz nd că e o femeie care reprezintă o agenție de modelling. Fata i-a trimis câteva poze, iar agresorul i-a cerut mai multe. când minora a refuzat, a început să o amenin?e că o să publice fotografiile pe internet.",
+                "Locul faptei":"Online",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":" Este clar că nu va fi pl?tit c t timp orele de educașie muzical? pe care le deținea la cele două școli gimnaziale unde era titular vor fi susținute de altcineva.  n funcție de rezultatele anchetei, vom lua și o decizie care poate să ajung? și la desfacerea contractului de muncă , a afirmat inspectorul general al ISJ Tulcea, Mihai Stroe.",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Condamnat la 2 ani și 3 luni de închisoare cu suspendare. I s-a interzis să fie profesor pe o perioadă de 2 ani. Profesorul trebuie să  i plătească victimei 15.000 de euro.",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 23.795692,44.3325197 ],
+                
+                details: {
+                "Status":"Dosar penal + presă",
+                "Județ":"Dolj",
+                "Localitate":"Craiova",
+                "Unitatea de învățământ a victimei":"Colegiul Pedagogic  ?tefan Velovan ",
+                "Anul faptei":"2022",
+                "Nume Profesor":"Tănăsie Laurențiu, profesor de istorie, 66 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Folosirea abuzivă a funcției în scop sexual",
+                "Vârsta victimelor":"Clasa a XII-a",
+                "Fapta":"Profesorul de istorie i-a cerut unei eleve de clasa a 12-a să dea examen   n pat , cu  picioarele desfăcute  ca să o promoveze la istorie și ca să ia examenul de bacalaureat. ",
+                "Locul faptei":"La telefon",
+                "Reacția unității de învățământ":"Adrian Stroe, directorul Colegiului:  E un incident regretabil pe care noi, conducerea unității,  l respingem cu fermitate. Un cadru didactic care nu a creat probleme p n?  n acest moment, nicidată nu a fost absent, nicidată nu a avut  nvoire. ",
+                "Reacție politică":"Oana Zaharie, ISJ Dolj:   n urma cercetărilorpoliției se vor lua măsuri disciplinare. Acest cadru didactic a trecut toate testele psihologice, nu a lăsat nicidată vreo urm? de suspiciune că ar avea probleme comportamentale. E pentru prima dat? când avem de a face cu astfel de situașie total nefericit?. Noi condamn?m cu vehemen?? astfel de situașii și ne dorim din tot sufletul să nu se mai  nt mple astfel de incidente. ",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Condamnat în prima instanță la 1 an și 6 luni de închisoare cu suspendare. I s-a interzis să fie profesor pe o perioadă de 4 ani. La apel fapta a fost schimbat? n 1 an și 2 luni de închisoare cu suspendare, iar termenul de supraveghere a fost  njum?t?șit. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 24.1012012,44.3507872 ],
+                
+                details: {
+                "Status":"Dosar penal + presă",
+                "Județ":"Olt",
+                "Localitate":"Balș",
+                "Unitatea de învățământ a victimei":"Liceul  Petre Pandrea ",
+                "Anul faptei":"2022",
+                "Nume Profesor":"Ene Ion Sorin, profesor de muzică, 45 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Act sexual cu un minor, pornografie infantil?",
+                "Vârsta victimelor":"15 ani",
+                "Fapta":"Profesorul de muzică a agresat sexual  n repetate r nduri o elevă de 15 ani pe care a cunoscut-o pe Facebook. Au  ntreșinut relații sexuale  n public,  n mașina agresorului, la pensiuni și  n casa acestuia. Profesorul i-a cerut și a primit de la fat? mai multe videoclipuri  n care aceasta se masturba. ",
+                "Locul faptei":"Public, casa profesorului",
+                "Reacția unității de învățământ":"Marian Anghel, director liceu: Nu este o relație  ntre profesor și eleva de la clasă pentru că lucrurile sunt mai vechi decât de câteva zile de când a început Școala și cazul așa cum am aflat până în acest moment este din afara școlii, nu este ca urmare a relației dintre profesor și eleva de la clasă, este venit din spate că eleva e nouă la noi  n școală. ",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"  Poliși?tii au  ntocmit un dosar penal sub aspectul săv rșirii infracăiunii de act sexual săv rșit cu un minor, fiind continuate cercetările  n vederea documentarii activit?șii infracăionale.  - IPJ Olt",
+                "Justiție":"Instanța urmează să se pronunțe. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"în arest",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 25.3636363,43.6614328 ],
+                
+                details: {
+                "Status":"Dosar penal + presă",
+                "Județ":"Teleorman",
+                "Localitate":"Zimnicea",
+                "Unitatea de învățământ a victimei":"Școala gimnazială 3 Zimnicea",
+                "Anul faptei":"2022",
+                "Nume Profesor":"Cornel Bleajă, profesor de fizică, 48 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Agresiune sexuală",
+                "Vârsta victimelor":"6 victime de clasa a VIII-a",
+                "Fapta":"Profesorul de fizică și-a agresat sexual elevele din clasa a VIII-a. Le atingea pe sâni, le mângâia și le dădea palme la fund. ",
+                "Locul faptei":"Sala de clasă",
+                "Reacția unității de învățământ":"Directorul unității de învățământ din Zimnicea, Petru Peia:  există niște suspiciuni legate de un comportament nepotrivit, el spune că a fost vorba de un sărut părintesc, însă copilul a simșit altceva. Dar trebuie stabilit dacă s-a depășit vreo linie. Este doar p?rintească sau mai mult? Eu, ca și conducător de unitate, am demarat aceast? anchet?, cercetare disciplinară și a?tept?m să vedem ce s-a  nt mplat exact acolo. (...) Vorbim despre mai mulși, el este apropiat de copii, i-a luat pe mai mulși  n bra?e, deci el ia  n bra?e și copiii, are un comportament mai apropiat, nu ?tiu ce să spun  C teodat? aceast? apropiere e bun?, c teodat? e rea  ",
+                "Reacție politică":" Nu am tolerat, nu tolerez și nu voi tolera astfel de gesturi și mi-am manifestat regretul profund fa?? de ce am aflat din presă în legătură cu aceste presupuse fapte incompatibile atât cu profesia dumnealui de dascal c t și cu cea de membru al PSD, Organizașia Teleorman  (...)   Organizașia Teleorman PSD s-a delimitatâtotal de un asemenea comportament nociv, imoral și periculos. și nu doar că a făcut-o la nivel teoretic, ci și la nivel practic. L-am exclus din partid. A fost exclus din partid , a anun?at pre?edintele PSD Teleorman, Adrian G dea.",
+                "Reacția poliției":"",
+                "Justiție":"Instanța urmează să se pronunțe.",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"în arest",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 21.2325864,45.7473301 ],
+                
+                details: {
+                "Status":"Dosar penal + presă",
+                "Județ":"Timiș",
+                "Localitate":"Timișoara",
+                "Unitatea de învățământ a victimei":"Universitatea de Vest din Timișoara",
+                "Anul faptei":"2022",
+                "Nume Profesor":"B?lt??eanu Doru Marcel, profesor de matematică, 55 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Coruperea sexuală a minorilor",
+                "Vârsta victimelor":"13 ani",
+                "Fapta":"În timpul orelor de meditații, profesorul a  ncercat să sărute o elevă de 13 ani. A agresat-o sexual și a atins-o pe sâni. ",
+                "Locul faptei":"Casa profesorului",
+                "Reacția unității de învățământ":" Dorim să subliniem faptul că astfel de comportamente contravin flagrant normelor și valorilor universității de Vest din Timișoara, care a urm?rit  ntotdeauna promovarea unei conduite morale și responsabile a membrilor sși. Susșinem  n mod ferm demersul institușiilor abilitate  n cercetarea contextului  n care s-au produs faptele invocate, care au stat la baza pl ngerii ce a declan?at investigașia institușiilor de anchet? abilitate din Timișoara , a precizat Universitatea de Vest din Timișoara. Cu referire la faptele reprobabile invocate, fără a nega prezumșia de nevinov?șie de care se bucur? orice persoan? acuzat?, p n? la pronun?area unei hot?r ri judecătore?ti definitive de condamnare  mpotriva sa, fără a influen?a  n vreun fel urm?rirea penal? aflat?  n desf??urare, însă con?tienși de rolul cov rșitor pe care educașia  l are, și anume acela de a crea modele, Universitatea de Vest din Timișoara se delimiteaz? ferm, explicit și de  ndat? de astfel de comportamente .",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Condamnat în prima instanță la 2 ani de închisoare cu suspendare. I s-a interzis să mai profeseze timp de 5 ani și trebuie să  i plătească minorei daune de 10.000 de euro. Apelul a fost respins ca nefondat, iar acum se judecă recursul. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"în arest preventiv",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 26.6744079,47.7999869 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Botoșani",
+                "Localitate":"Costești",
+                "Unitatea de învățământ a victimei":"Școala gimnazială Nr. 2 din Costești",
+                "Anul faptei":"2021-2022",
+                "Nume Profesor":"Apetrei Gabriel, profesor de matematică, 50 de ani. ",
+                "Categorie abuz":"",
+                "Acuzații":"Agresiune sexuală",
+                "Vârsta victimelor":"13-14 ani",
+                "Fapta":"În timpul orelor, profesorul a agresat sexual trei eleve de 14 și 13 ani. Le-a atins în zonele intime și le-a mângâiat pe corp. ",
+                "Locul faptei":"Orele de curs",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":" În cauză a fost deschis un dosar penal, sub aspectul comiterii infracăiunii de agresiune sexuală, cercetările fiind continuate pentru stabilirea cu exactitate a tuturor  mprejur?rilor  n care s-ar fi produs fapta , potrivit purt?torului de cuv nt al Politiei Botoșani,  Delia Neniscu.",
+                "Justiție":"Condamnat în prima instanță la 5 ani și 8 luni de închisoare. I s-a interzis să mai ocupe funcția de profesor timp de 5 ani și trebuie să le plătească celor trei victime câte 1.000 de lei daune materiale, 50.000 de lei daune materiale și cheltuieli de judecată. Apelul se judecă. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":" în penitenciar",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 27.7791491,44.02015 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Constanța",
+                "Localitate":"Dobromir",
+                "Unitatea de învățământ a victimei":"Liceul  Radu Prișcu  din Dobromir",
+                "Anul faptei":"2018-2022",
+                "Nume Profesor":"Ciorogaru Alexandru Laurențiu, profesor de română, 42 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Coruperea sexuală a minorilor în formă continuată",
+                "Vârsta victimelor":"13-16 ani",
+                "Fapta":"În timpul orelor, profesorul de română a agresat sexual mai mulși elevi minori.  îi atingea pe fund, în zona inghinală, pe coapse și pe buze, iar altora le-a trimis fotografii nud. ",
+                "Locul faptei":"Orele de curs, online",
+                "Reacția unității de învățământ":"Directoarea școlii:  Sunt profesori  în școală care  încă  îl apără pe Laurențiu Ciorogaru. O parte dintre colegi mă acuză pe mine. La nivel de discușii de cancelarie, totul este o  nscenare. Totul este făcut de mine să-i fac r?u, eu am influen?at copiii. și copiii mint .  ",
+                "Reacție politică":"Sorin Mihai, ISJ Cosntan?a:  Ce am văzut țn imaginile inițiale era că domnul profesor îi lovește pe copii  ntr-o manieră de joacă stupidă. Părea că, de fapt, are o atitudine inadecvat? pentru că  îi pălmuia  în glumă, sau știu eu,  într-o manieră ciudată pe copii. Nu reieșea nicicum că  îi atingea  în zona intimă ISJ Constanța:  Film?rile au fost prezentate de pe dispozitivul electronic al doamnei directoare și nu au fost puse la dispozișia ISJ Constanța pentru a putea fi analizate. Din fragmentele de  nregistr?ri video vizionate la acel moment, reie?ea că profesorul avea un comportament inadecvat fa?? de elevi, a?a cum de altfel a precizat însăși doamna directoare  n adresa transmisă  n data de 10.02.2022. Nu s-au putut distinge la acel moment, însă, gesturi care să poat? fi catalogate drept agresiune de natură sexuală, dar p?rea să fie din partea cadrului didactic o atitudine posibil umilitoare fa?? de copii. De altfel, doamna directoare ne-a comunicat la acel moment faptul că a discutat cu profesorul Ciorogaru, care i-ar fi spus că gesturile sale erau de  ncurajare,  n spirit de glum? ,",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Trimis  n judecată  n aprilie 2022. Dosarul  ncă se judecă. Profesorul ar trebui să plătească daune morale fiecărei victime, a?a că i s-a pus sechestru pe avere. Profesorul a cerut str?mutarea procesului, recuzarea procurorului și a judecătorului și o schimbare a  ncadr?rii juridice.  n paralel, a dat în judecată pe cei pe care i-ar fi agresat dar și liceul, IPJ Constanța, Ministerul Educației, DGASPC Constanța și Parchetul de pe l ng? Judecătoria Medgidia. Profesorul a fost amendat pentru mulșimea de acăiuni  n instanță pe care le-a  ntreprins.",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"în arest la domiciliu.",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 26.9119159,46.9350458 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Neamț",
+                "Localitate":"Roman",
+                "Unitatea de învățământ a victimei":"Centrul Școlar prntru Educașie Incluziv? Roman",
+                "Anul faptei":"2017-2019",
+                "Nume Profesor":"Ghebosu Adrian, profesor-educator, 44 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Act sexual cu un minor",
+                "Vârsta victimelor":"15 ani",
+                "Fapta":"Profesorul a violat în repetate rânduri o minoră de 15 ani cu dizabilități. A violat-o în sala de clasă, pe catedră și în mașina sa. Fata a rămas însărcinată și a făcut avort.",
+                "Locul faptei":"Sala de clasă, mașina agresorului",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"după sentin?a din fond (pe care nu o avem), curtea de apel i-a redus pedeapsa la 3 ani de închisoare cu executare. Instanța a descris fapta ca  act sexual normal consimșit cu eleva minor? de 15 ani . ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"în penitenciar",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 26.1303609,44.4378623 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"București",
+                "Localitate":"București",
+                "Unitatea de învățământ a victimei":"UNATC",
+                "Anul faptei":"2020",
+                "Nume Profesor":"Chevorchian Florentin Nicolae, lector, 53 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"H?r?uire",
+                "Vârsta victimelor":"Anul II de studii",
+                "Fapta":"În timpul unui casting șinut fără aprobare  n incinta Facult?șii, lectorul i-a pus unei studente  ntreb?ri despre via?a ei intimă și despre relașia sa cu partenerul. După casting, Chevorchian a început să îi trimită studentei mesaje la ore târzii și să facă apropouri sexuale. După ce victima i-a spus că vrea o relație strict profesională, lectorul a început să o amenin?e, să  i spună că n-o să mai fie primită la niciun casting și că o să o depuncteze la examene. ",
+                "Locul faptei":" n facultate",
+                "Reacția unității de învățământ":" i desface contractul de muncă",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Lectorul a atacat  n Justiție decizia universității prin care i s-a desfăcut contractul de muncă. Instanța i-a respins cererea și în fond, și la apel. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Are o agenție de casting și e invitat la evenimente culturale. ",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 21.6062986,45.647436 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Timiș",
+                "Localitate":"Buziaș",
+                "Unitatea de învățământ a victimei":"Liceul Teoretic Buziaș",
+                "Anul faptei":"2020",
+                "Nume Profesor":"Scurtu Gheorghe Alexandru, profesor de latină, XX ani (nu știm)",
+                "Categorie abuz":"",
+                "Acuzații":"H?r?uire",
+                "Vârsta victimelor":"clasa a 5-a",
+                "Fapta":"Pe 5 ianuarie 2020, profesorul de latină i-a trimis unui elev o poz? cu organul lui genital. Conform instan?ei, un elev a creat un cont fals de Facebook  pentru a purta discușii cu tem? sexuală , a intrat  n contact cu profesorul și a pretins că este un bșiat de 16 ani  pentru amuzament . Bșiatul a primit o poz? nud de la profesor și apoi a trimis-o către mai mulși colegi. Profesorul ?tia că vorbea cu un minor, i-a spus că e o  diferen?? mare de vârstă  și  nu vreau probleme,  n?elege , dar tot i-a trimis fotografii cu penisul. ",
+                "Locul faptei":"Online",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Instanța a refuzat cererea profesorului și a menținut decizia de concediere luat? de liceu, dar a spus că nu contează  vârsta destinatarului fotografiei ,  ci faptul că profesorul nu ar fi trebuit să apar?  n astfel de ipostaze. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 26.139753,44.3769855 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"București",
+                "Localitate":"București",
+                "Unitatea de învățământ a victimei":"Liceul Tehnologic Dacia",
+                "Anul faptei":"2017",
+                "Nume Profesor":"Fugaru Florin, profesor de istorie, 45 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Folosire abuzivă a funcției  n scop sexual și luare de mită",
+                "Vârsta victimelor":"clasa a 10-a, clasa a 9-a, 2 eleve de clasa a 12-a",
+                "Fapta":"Profesorul de istorie le cerea elevilor corigenși bani sau favoruri sexuale ca să  i treacă clasa. Bșieșilor le cerea doar bani, iar fetelor bani sau sex. Pe una dintre victime, elevă în clasa a IX-a, profesorul a chemat-o în sala de curs, a pus-o să  și închidă telefonul și i-a spus că are două opțiuni ca să treacă clasa: să îi dea câteva sute de lei sau să  îi ofere  altceva  că este  fată deșteaptă . Altei eleve de clasa a 12-a i-a cerut 500 de lei, iar când victima i-a spus că nu are bani, a atins-o pe p?r și pe decolteu, i-a spus că este frumoasă și i-a cerut indirect favoruri sexuale. ",
+                "Locul faptei":"Sala de clasă",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Judecătorii l-a condamnat la 3 ani de închisoare cu suspendare și muncă în folosul comunității pentru luare de mită și pentru folosirea funcției  n scop sexual și i-a interzis dreptul de a fi profesor pe o perioadă de 5 ani de la emiterea sentinței definitive. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 24.8690346,44.8612746 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Pite?ti",
+                "Localitate":"Argeș",
+                "Unitatea de învățământ a victimei":"Colegiul Tehnic  Armand călinescu ",
+                "Anul faptei":"2014",
+                "Nume Profesor":"Cristi Cristi Constantin, profesor de marketing și managementul afacerilor, 47 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"?antaj",
+                "Vârsta victimelor":"Clasa a IX-a",
+                "Fapta":" n 2014, în timp ce erau  ntr-o sal? de curs și se pregăteau să plece  ntr-o excursie, profesorul a atins-o pe fund pe eleva de 15 ani. în aceeași zi, mai mulși elevi din liceu, inclusiv victima, s-au urcat  n autocar. L ng? ea s-a a?ezat profesorul, care a  ntrebat-o dacă  l lasă să o mai atingă o dat? pe fund. Eleva a refuzat, iar profesorul a început să o amenin?e și să  i spună că are trei variante:  să  i permită să o atingă, să  i permită să o atingă și să  i facă plăcere, ori să  i permită să o atingă, dar să nu-i facă plăcere . Fata a refuzat, iar profesorul i-a spus  exil scrie pe tine , suger nd că o să aib? probleme la școală. Alte două eleve le-au spus procurorilor că profesorul le-a atins pe fund, iar una dintre ele a spus că profesorul a dus-o  ntr-un loc izolat, unde a început să o m ng ie pe obraz și pe m n?. ",
+                "Locul faptei":"Sala de clasă, autocar",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Prima instanță l-a condamnat pe profesor la 1 an de închisoare cu suspendare și l-a obligat să meargă la programe de reintegrare socială și să lucreze în folosul comunității la primăria Bascov. Parchetul de pe l ng? Judecătoria Pite?ti a formulat apel  mpotriva sentinței și a cerut ca inculpatului să  i fie interzis să lucreze ca profesor pe o perioadă de un an, iar Curtea de Apel a admis cererea. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 26.654221,47.7448291 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Botoșani",
+                "Localitate":"Botoșani",
+                "Unitatea de învățământ a victimei":"LICEULUI TEORETIC  GRIGORE ANTIPA Botoșani, Inspectoratul Școlar Județean Botoșani",
+                "Anul faptei":"2020",
+                "Nume Profesor":"Teodoru Mihail Corneliu, profesor de educașie antreprenorial?, XX de ani (nu știm)",
+                "Categorie abuz":"",
+                "Acuzații":"H?r?uire",
+                "Vârsta victimelor":"Clasa a X-a",
+                "Fapta":"În timpul orei, profesorul a comparat-o pe o elevă cu o actri?? porno și i-a  ndemnat pe colegii ei să caute fotografii pe internet ca să  analizeze  asem?n?rile. Elevii au reclamat și că profesorul le face elevelor avansuri cu tent? sexuală, că are  priviri foarte insistente, nepotrivite unui profesor  și că  i pune să facă teste psihologice cu tent? sexxual?  n care să afle  portretul sexual și erotic . ",
+                "Locul faptei":"Sala de clasă",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Instanța a refuzat cererea profesorului și a menținut decizia de sancăionare. Profesorul a făcut apel, dar a pierdut. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"E  n continuare profesor la aceeași școală",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 26.1008846,44.4352106 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"București",
+                "Localitate":"București",
+                "Unitatea de învățământ a victimei":"UNIBUC",
+                "Anul faptei":"2019",
+                "Nume Profesor":"Ghiocel Bota, lector universitar, 59 de ani ",
+                "Categorie abuz":"",
+                "Acuzații":"H?r?uire",
+                "Vârsta victimelor":"3 studente  n anul 2",
+                "Fapta":"Lectorul  ntreba studentele dacă fac sex și  de ce se excit? atunci când sunt luate de g t . Unei studente i-a propus să se mute  n  vila lui din Cotroceni  ca să   l sl?bească , promi? ndu-i că o să o  umple de bani . Pe o altă student? a luat-o de gât, i-a sucit mâna și i-a spus că trebuie să facă cursuri de autoapărare, iar pe alta a  ncercat să o atingă, i-a cerut să  l ducă acasă la ea și a  ntrebat-o dacă profesorii din liceu  i f?ceau avansuri. Lectorul f?cea constant glume cu tent? sexuală.",
+                "Locul faptei":"Sala de curs",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Profesorul a cerut anularea deciziei de concediere și a argumentat că f?cea glume cu tent? sexuală ca să le scoat? pe studente din zona de confort și că nu le-a agresat fizic, ci a  ncercat să le demonstreze mai multe tehnici de autoapărare. Cererea lui a fost respinsă și  n fond și la apel, iar decizia de concediere a fost menținută.",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 28.0548972,45.4451229 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Galați",
+                "Localitate":"Galați",
+                "Unitatea de învățământ a victimei":"Liceul Particular  Marin Coman ",
+                "Anul faptei":"2014",
+                "Nume Profesor":"Marin Coman, profesor de matematică, 82 de ani (în 2017, a murit între timp)",
+                "Categorie abuz":"",
+                "Acuzații":"Act sexual cu un minor, folosire abuzivă a funcției  n scop sexual",
+                "Vârsta victimelor":"Clasa a XII-a",
+                "Fapta":"Directorul Liceului Particular  Marin Coman  din Galați era clientul unei re?ele de trafic de persoane care exploata inclusiv victime minore. Unei victime minore și uneia majore le-a propus să se înscrie la liceul la care e director, iar cea major? a acceptat. Victima s-a  nscris la liceu  n 2014, iar Marin Coman i-a spus că dacă  ntreșin relații sexuale  n fiecare lun?, atunci ea va fi scutit? de taxa de școlarizare și va primi bursă de merit și că o va ajuta să intre la Școala postliceal? la care  și dore?te. Eleva a refuzat. Coman a mai făcut o dat? aceleași propuneri după ce eleva era  n pericol să r?m n? corigent? la două materii. Acesta i-a spus că fie  ntreșin relații sexuale, fie pl?te?te 200 de euro/materie nepromovat?, subliniind că situația ei s-a agravat pentru că i-a refuzat avansurile inițiale. ",
+                "Locul faptei":"Liceu",
+                "Reacția unității de învățământ":"",
+                "Reacție politică":"",
+                "Reacția poliției":"",
+                "Justiție":"Instanța l-a condamnat pe Coman la un an de închisoare cu suspendare și i-a interzis să profeseze ca profesor/director pe o perioadă de trei ani. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Decedat",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 26.1138271,45.7702332 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Zagon",
+                "Localitate":"Covasna",
+                "Unitatea de învățământ a victimei":"Școala gimnazială  MIKES KELEMEN",
+                "Anul faptei":"2019",
+                "Nume Profesor":"Precup Alexandru Csaba, profesor de matematică, 54 de ani ",
+                "Categorie abuz":"",
+                "Acuzații":"H?r?uire",
+                "Vârsta victimelor":"Clasa a VII-a",
+                "Fapta":"Mai mulși elevi de la clasele la care preda au semnat o declarație în care reclamau că profesorul e agresiv verbal, că nu explică lecăiile și că i-a propus unui elev să facă sex, iar altuia i-a arătat fotografii pornografice și i-a spus că  nu ai văzut  n via?a ta a?a ceva . Elevii au spus că profesorul le adreseaz? cuvinte obscene și pornografice și că le  face cu ochiul , semnal nd un comportament cu tent? sexuală.",
+                "Locul faptei":"Sala de clasă",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Instanța a refuzat cererea profesorului și a spus că decizia de concediere este valid? și că nu se poate dovedi că Școala a refuzat să  i comunice informașiile de interes public cerute. Profesorul a făcut recurs, dar Instanța l-a refuzat  ncă odat?.",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 23.88603,47.93195 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Sighetu-Marmației",
+                "Localitate":"Maramureș",
+                "Unitatea de învățământ a victimei":"Scoala gimnazială  Dr. Ioan Mihalyi de Ap?a ",
+                "Anul faptei":"2018-2019",
+                "Nume Profesor":"Pop Mitea, profesor de fizică, 62 de ani ",
+                "Categorie abuz":"",
+                "Acuzații":"Agresiune, hartuire",
+                "Vârsta victimelor":"Clasa a VIII-a",
+                "Fapta":"Profesorul a avut un comportament abuziv față de elevii și de colegii și a avut un  management defectuos al claselor , a fost agresiv verbal și a acordat note în funcție de aspectul fizic al elevilor. Unei eleve de clasa a VIII-a i-a spus  lepră, idioată  și i-a făcut avansuri sexuale  a? vrea să fiu cu tine dar nu mi se mai scoal? . Școala a decis să-l sancăioneze cu diminuarea salariului cu 10% pentru o lun?. Profesorul a mai fost cercetat și sancăionat disciplinar  n 2018 pentru aceleași fapte. ",
+                "Locul faptei":"Sala de clasă",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"în prima instanță, Tribunalul a refuzat cererea profesorului și a menținut decizia de sancăionare. Profesorul a făcut apel, iar Curtea i-a dat dreptate și a spus că decizia de sancăionare trebuie anulat? pentru că profesorul nu a fost  n?tiin?at că poate să constate decizia  n instanță, dar a refuzat să  i acorde daunele morale pe care le cerea. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Lucreaz?  n continuare la aceeași școală",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 23.275462,45.8404379 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Romos",
+                "Localitate":"Hunedoara",
+                "Unitatea de învățământ a victimei":"Școala gimnazială ROMOS",
+                "Anul faptei":"2017",
+                "Nume Profesor":"Florian Dobrot?, profesor de civică, 63 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Agresiune sexuala",
+                "Vârsta victimelor":"Clasa a VIIa",
+                "Fapta":"În timpul orelor de civică, profesorul se ducea  n spatele clasei, se a?eza  n genunchi și  i atingea pe elevi  n zonele intime,  i mângâia pe picior, le f?cea masaj și,  n general,  i f?cea pe elevi să simt?  n  nesiguran?? . Chestionași de ISJ, elevii au spus că  am vazut că la unii colegi din clasă se punea  n genunchi și  i atingea n unele locuri ,  D-nul profesor se punea  n genunchi l ng? doi colegi și le punea m na pe organele genitale ,  uneori se apleacă la un bșiat și-l m ng ie pe spate,  i pune m na pe picior ,  ne m ng ie foarte des  n ore pe spate ... . Elevii au spus că profesorul s-a comportat abuziv de mai multe ori. ",
+                "Locul faptei":"Sala de clasă",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Sancăiune disciplinară",
+                "Reacția poliției":"Procurorii au clasat dosarul  n care profesorul era cercetat pentru corupere sexuală a minorilor.",
+                "Justiție":"Profesorul a cerut anularea deciziei de sancăionare, dar și daune morale. Cererea sa a fost respinsă și de Instanța de fond, și de curtea de apel.",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Lucreaz?  n continuare  n învățământ și pred? la mai multe școli din Județ.",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 22.6508694,44.6347808 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Drobeta Turnu Severin",
+                "Localitate":"Mehedinți",
+                "Unitatea de învățământ a victimei":"Colegiul Pedagogic ?tefan Odobleja",
+                "Anul faptei":"2012-2013",
+                "Nume Profesor":"Arbanași Marius, profesor de română, 76 de ani",
+                "Categorie abuz":"",
+                "Acuzații":"Trafic de influență",
+                "Vârsta victimelor":"Clasa a XII-a",
+                "Fapta":"Profesorul de română, corector la bac, le-a cerut elevilor cu care f?cea meditații bani sau favoruri sexuale  n schimbul obșinerii unor rezultate mai bune la examenul de bacalaureat. O elevă a spus că acesta i-a lăsat de înțeles că o va ajuta la bacalaureat dacă vor  ntreșine relații sexuale, iar ea a cedat presiunii profesorului.  n stenogramele din prima instanță există o  nregistrare telefonică  n care doi b?rbași vorbesc inclusiv despre o filmare  n care Arb?nași f?cea sex cu o elevă.  Mi-ar?t? o filmare când st?tea A. cu curu' la el și sărea-n p**?.   A filmat-o de la spate ,  Mi-o ar?t? pe telefonu lui . ",
+                "Locul faptei":"Neclar",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":" n cazul elevei care a  ntreșinut relații sexuale cu profesorul, Instanța a spus că  aceasta nu reprezintă o prob? cert? de vinov?șie, av nd  n vedere că nu a existat o promisiune expresă din partea inculpatului și nici o pretinsă influență a acestuia fa?? de anumiși funcăionari publici, fiind vorba doar de simpla percepșie a martorei cu privire la un eventual ajutor din partea inculpatului. De asemenea, aceasta nu face referire la vreo sum? de bani acordat? profesorului , dar a spus că faptul că profesorul a pretins favoruri sexuale din partea elevelor este un  comportament incompatibil cu etica profesiei de dascăl . Prima instanță l-a condamnat la 4 ani de închisoare cu executare și i-a interzis să profeseze  n vreo unitate de inv???m nt timp de 4 ani, dar la apel pedeapsa a fost redusă la 3 ani de închisoare cu executare și interzicerea profesării  n vreo unitate de învățământ timp de 3 ani. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Pensionar",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 23.6547565,46.7840716 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Cluj-Napoca",
+                "Localitate":"Cluj",
+                "Unitatea de învățământ a victimei":"Școala Generală  Traian Dârjan ",
+                "Anul faptei":"2009-2016",
+                "Nume Profesor":"Mihai Bogdan Pop, instructor de dans, 47 de ani ",
+                "Categorie abuz":"",
+                "Acuzații":"Trafic de minori",
+                "Vârsta victimelor":" ntre 11 și 15 ani",
+                "Fapta":"Instructorul de dans a violat ani la r nd mai multe minore racolate pe Facebook, cu conturi false, sau direct, la preselecăii organizate  n școli. șintea  n special fete care proveneau din familii sărace sau dezorganizate, pe care le convingea că p?rinșii lor nu sunt persoane de  ncredere. Le promitea o carieră de succes. În timpul violului, agresorul le amenința că o să sune la protecăia copilului și că fetele o să fie luate din custodia părinților dacă refuză să întrețină relații sexuale, dacă  l reclam? și dacă refuză să producă materiale pornografice. ",
+                "Locul faptei":"Casa profesorului",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Condamnat în prima instanță la 10 ani și 8 luni de închisoare. I s-a interzis dreptul de a desf??ura orice activit?și de instruire a minorilor care au sub 15 ani și a fost obligat să plătească daune morale de 10.000 de lei pentru fiecare victimă. A făcut apel și judecătorii i-au schimbat pedeapsa  n 10 ani de închisoare. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"în închisoare",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 28.1521189,46.3735151 ],
+                
+                details: {
+                "Status":"Dosar",
+                "Județ":"Vaslui",
+                "Localitate":"Berezeni",
+                "Unitatea de învățământ a victimei":"Școala gimnazială  Anastasie F?tu\" Berezeni",
+                "Anul faptei":"2014-2016",
+                "Nume Profesor":"Vorobchievici Constantin, profesor de engleză, cultur? civică și istorie., 63 de ani ",
+                "Categorie abuz":"",
+                "Acuzații":"Corupere sexuală a minorilor",
+                "Vârsta victimelor":"10, 13 ani",
+                "Fapta":"Profesorul le chema  n biroul său pe elevele pe care le considera  dezvoltate din punct de vedere fizic . Le spunea să vin? singure și apoi  ncepea să le pipșie pe sâni și pe fund, le f?cea complimente și le cerea să nu vorbească nicidată despre ce se  nt mpl?  n cabinet. Mai mulși elevi din școală au spus că profesorul era cunoscut pentru comportamentul său neadecvat și că atingea elevele pe sâni și pe fund și În timpul orelor. Elevii au spus și că victima  preferat?  a profesorului era o minor? de 10 ani, pe care o chema și o agresa  n biroul său aproape zilnic. ",
+                "Locul faptei":"școală",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"Instanța l-a condamnat la 3 ani de închisoare cu suspendare și i-a interzis dreptul să fie profesor pentru 4 ani. L-a obligat să le plătească victimelor desp?gubiri de 10.000, respectiv 15.000 de lei. A făcut apel, dar a fost respins. A  ncercat să atace și pedeapsa complementar? prin care i s-a interzis să mai fie profesor, dar a pierdut.",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 25.4649446,44.9292928 ],
+                
+                details: {
+                "Status":"Dosar penal",
+                "Județ":"Dâmbovița",
+                "Localitate":"Târgoviște",
+                "Unitatea de învățământ a victimei":"Scoala Postliceala Sanitar?  Christiana ",
+                "Anul faptei":"2015-2016",
+                "Nume Profesor":"Simion Ion, profesor universitar, xx ani ",
+                "Categorie abuz":"",
+                "Acuzații":"Luarea de mită, folosire abuzivă a funcției  n scop sexual",
+                "Vârsta victimelor":"Student?  n ultimul an",
+                "Fapta":"Profesorul i-a cerut unei studente bani sau favoruri sexuale ca să o ajute să  și scrie lucrarea de licen??. Profesorul s-a  nt lnit cu victima de mai multe ori,  n zone retrase din școală, și i-a spus că,  n loc să  i dea bani, pot face sex. Martori intervievași de procurori au spus că victima a fost agresat? sexual de profesor și ca asta a făcut-o să fie mai retrasă, să se  mboln?vească și să lipsească de la ore.",
+                "Locul faptei":"școală",
+                "Reacția unității de învățământ":"Inexistentă",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Inexistentă",
+                "Justiție":"A fost condamnat la 2 ani și 11 luni de închisoare cu suspendare. I s-a interzis să fie profesor pentru un an. ",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":""
+                }
+            },
+            {
+                
+                
+                
+                coordinates:  [ 26.0939212,44.4661722 ],
+                
+                details: {
+                "Status":"Presa",
+                "Județ":"București",
+                "Localitate":"București",
+                "Unitatea de învățământ a victimei":"Liceul Teoretic  Jean Monet Școala nr. 7",
+                "Anul faptei":"2021",
+                "Nume Profesor":"Sorin Apostol Dumitrescu",
+                "Categorie abuz":"Atingeri lascive, mimarea actului sexual",
+                "Acuzații":"Inexistente",
+                "Vârsta victimelor":"16",
+                "Fapta":"Un profesor suplinitor de muzică a dansat și mimat scene erotice cu o elevă la o petrecere de adolescenși, în timp ce elevii aplaudau și filmau cu telefoanele. ",
+                "Locul faptei":"Casă privată",
+                "Reacția unității de învățământ":"Directoarea liceului, Tudorița Codreanu:  Din păcate, nu există o resursă umană care să poat? fi aleasă după niște criterii. și dincolo de porșile școlii nu putem ști cine ce face și cum .ISJ București, purt?toare de cuv nt Larisa Gojnete:  Profesorul și-a dat demisia fără să dea detalii școlii, spun nd doar este o confuzie și că face acest gest  pentru că nu vrea ca imaginea școlii să fie afectat?. M-am uitat pe filmule?,  n acest moment nu știm de unde provin copiii,  n ce cadru s-a  nt mplat. ",
+                "Reacție politică":"Inexistentă",
+                "Reacția poliției":"Verificări în curs",
+                "Justiție":"Inexistentă",
+                "Ce face abuzatorul în prezent/Declarație abuzator":"Necunoscut",
+                "Alte victime":""
+                }
+            }
+            
+                
+]
+
+
+// Global variable to keep track of all markers
+var allMarkers = [];
+
+// Function to map status to color
+function getStatusColor(status) {
+    const statusColorMap = {
+        "Presa": "red",
+        "Dosar penal + presă": "blue",
+        "Dosar penal": "green",
+        // ... other status colors
+    };
+    return statusColorMap[status] || "gray"; // Default color if status not found
+}
+
+// Function to adjust overlapping markers
+function adjustOverlappingMarkers(locations) {
+    const locationCount = {};
+    const offsetAmount = 0.0001; // Small offset
+
+    locations.forEach((location, index) => {
+        const coordKey = location.coordinates.join(',');
+
+        if (!locationCount[coordKey]) {
+            locationCount[coordKey] = 0;
+        } else {
+            locationCount[coordKey]++;
+            locations[index].coordinates = offsetCoordinates(location.coordinates, locationCount[coordKey], offsetAmount);
+        }
+    });
+}
+
+function initSlider() {
+    var sliders = document.querySelectorAll('.image-slider');
+    sliders.forEach(slider => {
+        var slides = slider.querySelectorAll('.slide');
+        var currentSlide = 0;
+
+        function goToSlide(n) {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (n + slides.length) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+
+        slider.querySelector('.prev').addEventListener('click', function() {
+            goToSlide(currentSlide - 1);
+        });
+
+        slider.querySelector('.next').addEventListener('click', function() {
+            goToSlide(currentSlide + 1);
+        });
+    });
+}
+
+function updatePanel(location) {
+    // Change the title when a marker is clicked
+    document.getElementById('markerTitle').textContent = 'Descrierea cazului';
+
+    var detailsHtml = '';
+    Object.keys(location.details).forEach(key => {
+        detailsHtml += '<strong>' + key + ':</strong> ' + location.details[key] + '<br>';
+    });
+    detailsHtml += '</div>';
+
+    document.getElementById('markerDetails').innerHTML = detailsHtml;
+    initSlider();
+}
+
+// Function to add markers to the map
+function addMarkersToMap(locations) {
+    allMarkers = []; // Reset the markers array
+
+    locations.forEach(location => {
+        const coordinates = location.coordinates;
+        const status = location.details["Status"];
+        const statusColor = getStatusColor(status);
+
+        var el = document.createElement('div');
+        el.className = 'marker';
+        el.style.backgroundColor = statusColor;
+        el.style.borderRadius = '50%'; // Makes the div a circle
+        el.style.width = '20px'; // Size of the dot
+        el.style.height = '20px';
+        el.style.border = '2px solid white'; // Optional: adds a border to the dot
+
+        var marker = new mapboxgl.Marker(el)
+            .setLngLat(coordinates)
+            .addTo(map);
+
+        marker.getElement().addEventListener('click', () => updatePanel(location));
+
+        // Store the marker with its status
+        allMarkers.push({ marker: marker, status: status });
+    });
+}
+
+// Function to dynamically update search hints based on user input
+function updateSearchHints() {
+    var query = document.getElementById('searchInput').value.toLowerCase();
+    var hints = document.getElementById('searchHints');
+    hints.innerHTML = '';
+
+    if (query.length > 2) {
+        locations.forEach(location => {
+            const status = location.details["Status"] ? location.details["Status"].toLowerCase() : '';
+            const localitate = location.details["Localitate"] ? location.details["Localitate"].toLowerCase() : '';
+            const unitateInvatamant = location.details["Unitatea de învățământ a victimei"] ? location.details["Unitatea de învățământ a victimei"].toLowerCase() : '';
+
+            if (status.includes(query) || localitate.includes(query) || unitateInvatamant.includes(query)) {
+                var li = document.createElement('li');
+                li.textContent = `${localitate}, ${status}, ${unitateInvatamant}`; // Display a combination of the details
+                li.onclick = function () {
+                    searchAndNavigate(localitate, status, unitateInvatamant);
+                    document.getElementById('searchInput').value = `${localitate}, ${status}, ${unitateInvatamant}`;
+                };
+                hints.appendChild(li);
+            }
+        });
+    }
+}
+
+function searchAndNavigate(searchQuery) {
+    let found = false;
+    locations.forEach(location => {
+        const detailKeys = Object.keys(location.details);
+
+        for (let key of detailKeys) {
+            const detailValue = location.details[key] ? location.details[key].toLowerCase() : '';
+
+            if (detailValue.includes(searchQuery.toLowerCase())) {
+                updatePanel(location);
+                map.flyTo({ 
+                    center: location.coordinates,
+                    zoom: 10 // Adjust zoom level as needed
+                });
+                document.getElementById('searchHints').innerHTML = '';
+                found = true;
+                break; // Break after finding the first match
+            }
+        }
+    });
+
+    if (!found) {
+        alert("Location not found");
+    }
+}
+
+// Function to toggle markers based on status
+function toggleStatusMarkers(toggleStatus) {
+    allMarkers.forEach(item => {
+        var element = item.marker.getElement();
+        if (toggleStatus === "Toate") {
+            element.style.display = 'block'; // Show all markers
+        } else {
+            if (item.status === toggleStatus) {
+                element.style.display = 'block'; // Show markers with the selected status
+            } else {
+                element.style.display = 'none'; // Hide other markers
+            }
+        }
+    });
+}
+
+map.on('load', function() {
+    map.loadImage('marker.png', function(error, image) {
+        if (error) throw error;
+        map.addImage('custom-marker', image);
+        addMarkersToMap(locations);
+    });
+});
+
+
+
+
+    </script>
+</body>
+</html>
