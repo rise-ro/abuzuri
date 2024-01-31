@@ -207,10 +207,10 @@
     }
 
         #markerTitle {
-        background-color: white;
+        background-color: rgba(255, 255, 255, 0);
         padding: 10px;
         z-index: 1001; /* Increase this value if needed */
-        position: sticky;
+        
         top: 0;
     }
     #zoom-controls {
@@ -336,12 +336,12 @@
         </div>
     </div>
     <div id="panel">
-        <img src="acf.png" alt="Top Logo" id="topLogo" style="display: block; margin: auto;">
+        <img src="acf.png" alt="Top Logo" id="topLogo" style="display: block; margin-left: 0; margin-right: auto; margin-top: auto; margin-bottom: auto;">
         <img src="Logocatedra.png" alt="Top Logo" id="topLogotwo" style="display: block; margin-top: 30px; margin-left: 0; margin-right: auto; margin-bottom: auto;">
         <h2 id="markerTitle">Harta abuzului și hărțuirii în școlile și universitățile din România</h2>
         <div>
             <p>
-                <span class="outlined-text">Fiecare cerc</span> de pe hartă reprezintă un caz. Pentru detalii, <span class="outlined-text">zoom</span> pe hartă și <span class="outlined-text">click</span> sau <span class="outlined-text">caută</span> un caz de abuz după localitate sau instituția de învățământ. Folosește filtrele pentru a tria informația pe hartă </span>
+                Fiecare cerc de pe hartă reprezintă un caz. Cea mai mare parte a cercurilor sunt dispuse aleatoriu în localitate, fără legătură cu locația școlii.  Pentru detalii, zoom pe hartă și click sau caută un caz de abuz după localitate sau instituția de învățământ. Folosește filtrele pentru a tria informația pe hartă.
             </p>  
             <input type="text" id="searchInput" placeholder="Cauta..." oninput="updateSearchHints()">
             <button class="button" onclick="searchAndNavigate(document.getElementById('searchInput').value)">Caută după localitate/școală</button>
@@ -361,11 +361,11 @@
             <!-- Legend items will be added here -->
         </div>
         <p style="font-size: 12px;">
-            Dacă și tu te-ai confruntat cu o situație de abuz, scrie-ne pe <a href="mailto:catedradeabuz@gmail.com" style="color: red;">catedradeabuz@gmail.com</a>. Sau completează formularul de pe <a href="https://www.riseproject.ro/catedra-de-abuz/" style="color: red;">https://www.riseproject.ro/catedra-de-abuz/</a> și pune abuzul pe hartă. Volumul mare de mărturii primite de RISE nu a permis echipei mici a proiectului să investigheze fiecare caz în parte. Le publicăm cu această mențiune, deoarece le considerăm relevante pentru a arăta amploarea fenomenului.
+            Dacă și tu te-ai confruntat cu o situație de abuz, scrie-ne pe <a href="mailto:catedradeabuz@gmail.com" style="color: red;">catedradeabuz@gmail.com</a>. Sau completează formularul de pe <a href="https://www.riseproject.ro/catedra-de-abuz/" style="color: red;">https://www.riseproject.ro/catedra-de-abuz/</a> și pune abuzul pe hartă. 
 
         </p>
         <p id="additionalText" style="font-size: 12px;">
-            Proiect derulat de Asociația Rise Project în parteneriat cu Asociația ANAIS și beneficiază de o finanțare în valoare de 149.944,08 euro, prin programul Active Citizens Fund România, finanțat de Islanda, Liechtenstein și Norvegia prin Granturile SEE 2014-2021. Conținutul acestui website nu reprezintă în mod necesar poziția oficială a Granturilor SEE și Norvegiene 2014-2021; pentru mai multe informații accesați <a href="https://www.eeagrants.org/"style="color: red; target="_blank">www.eeagrants.org</a>. Informații despre Active Citizens Fund România sunt disponibile la <a href="https://activecitizensfund.ro/" style="color: red; target="_blank">www.activecitizensfund.ro</a> Lucrăm împreună pentru o Europă verde, competitivă și inclusivă #catedradeabuz #haide #ActiveCitizensFund #România #activecitizens #EEANorwayGrants.
+            Harta hărțuirii sexuale în sistemul de învațământ din România - Proiect derulat de Asociația Rise Project în parteneriat cu Asociația ANAIS și beneficiază de o finanțare în valoare de 149.944,08 euro, prin programul Active Citizens Fund România, finanțat de Islanda, Liechtenstein și Norvegia prin Granturile SEE 2014-2021. Conținutul acestui website nu reprezintă în mod necesar poziția oficială a Granturilor SEE și Norvegiene 2014-2021; pentru mai multe informații accesați <a href="https://www.eeagrants.org/"style="color: red; target="_blank">www.eeagrants.org</a>. Informații despre Active Citizens Fund România sunt disponibile la <a href="https://activecitizensfund.ro/" style="color: red; target="_blank">www.activecitizensfund.ro</a> Lucrăm împreună pentru o Europă verde, competitivă și incluzivă #catedradeabuz #haide #ActiveCitizensFund #România #activecitizens #EEANorwayGrants.
         </p>
         <img src="logofooter.png" alt="Bottom Logo" id="bottomLogo" style="display: block; margin: auto;">
     </div>
@@ -412,7 +412,7 @@
                 
                 "Justiție": "Prima instanță decide în 2017 că profesorul nu și-a folosit abuziv funcția în scop sexual, pentru că 1. nu a obținut într-un final niciun favor - nu a întreținut relații sexuale cu studenta și 2. nu ar fi pretins așa ceva. Inițiativa ar fi aparținut studentei, care ar fi înțeles greșit că el ar vrea favoruri sexuale. Ea ar fi provocat discuțiile dintre cei doi, după ce și-a anunțat părinții. La apel, în 2018, instanța arată că profesorul a acceptat o promisiune pe care nu a pretins-o, faptă care nu este pedepsită de lege. <strong style='color: red;'>condamnat</strong> definitiv la 2 ani de închisoare cu suspendare și 60 de zile de muncă în folosul comunității pentru fals intelectual, pentru că i-a modificat studentei nota în catalog. Nu are voie să fie profesor timp de 2 ani.",
                 "Status": "Condamnare cu suspendare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
                         }
@@ -436,7 +436,7 @@
                 
                 "Justiție": "3 luni închisoare cu suspendare pentru hărţuire și interzicerea timp de 2 ani a dreptului de a exercita profesia de profesor, de care s-a folosit la săvârşirea infracţiunii.În apel, daunele morale scad de la 20 la 10 mii de lei. Victima ceruse o sută de mii. „Este profund inadmisibil (…), nimeni nu are dreptul sub nicio justificare, mai ales în calitate de profesor, să îndrăznească să-şi umilească şi batjocorească verbal eleva care îi cere în mod repetat să o lase în pace.”Profesorul a mai fost sancționat de școală pentru că a cerut bani elevilor și părinților de la clasa la care era diriginte, în 2014, dar acesta a contestat decizia în instanță și a câștigat.",
                 "Status": "Condamnare cu suspendare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -457,7 +457,7 @@
                 "Reacție politică": "Ministrul Educației anunță la televizor că directoarea adjunctă a fost destituită, iar profesorul a intrat în cercetare disciplinară, timp în care nu a predat.",
                 "Justiție": "În prima instanță, tribunalul i-a dat dreptate profesorului și a justificat astfel: „fapta nu s-a petrecut în spațiile destinate educației”, iar profesorul n-a avut alte abateri disciplinare și nu a hărțuit și elevi de la celelalte două școli care-l concediaseră. Tribunalul Neamț a spus că eleva a dat jurnaliștilor conversațiile pe care le-a avut cu profesorul fără să aibă acordul acestuia, lucru care ar fi afectat atât imaginea profesorului, cât și imaginea școlii. În motivare, magistrații au criticat educația sexuală, despre care au zis că își propune să îi învețe pe copiii de 0-4 ani „tehniciile masturbării” și au decis înlocuirea deciziei de concediere cu diminuarea salariului cu 15% pentru 6 luni. Au obligat școlile să îi plătească profesorului despăgubiri în valoarea salariilor pe care nu le-a primit de când a fost concediat. Curtea de Apel Bacău a admis, însă, apelul făcut de cele două școli și a menținut deciziile de concediere.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
                 }
@@ -479,7 +479,7 @@
                 "Reacție politică": "PSD Timiș: „Clasarea dosarului (...) a stârnit, pe bună dreptate, indignare (...). Un astfel de caz, amplu mediatizat de presă, aduce traume serioase unui copil şi grave prejudicii de imagine sistemului de învăţământ. (...) Implicarea PSD în acest scandal este lipsită de fond şi nu are niciun corespondent în realitate. (...) Menţionarea PSD în tot ceea ce s-a întâmplat este tendenţioasă.”",
                 "Justiție": "Procurorii au clasat dosarul, iar profesorul a cerut anularea deciziei de întrerupere a contractului. Tribunalul a respins cererea pentru că a formulat contestația la mai mult de 30 de zile de când a primit decizia de desfacere a contractului. Curtea de apel a menținut sentința.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
                 }
@@ -500,7 +500,7 @@
                 
                 "Justiție": "Instanța l-a <strong style='color: red;'>condamnat</strong> la 3 ani de închisoare cu suspendare, la 90 de zile de muncă în folosul comunității în cadrul Primăriei Cochirleanca și la frecventarea unui program de reintegrare socială derulat de serviciul de probațiune. Judecătorii au considerat că profesorul poate să fie reabilitat, dar că acesta nu conștientizează impactul pe care l-a avut asupra victimei.",
                 "Status": "Condamnare cu suspendare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
                 }
@@ -522,7 +522,7 @@
                 
                 "Justiție": "<strong style='color: red;'>condamnat</strong> în primă instanță la 5 ani și 8 luni de închisoare și interzicerea dreptului de a fi profesor timp de 5 ani după executarea pedepsei. După apel, pedeapsa a fost redusă la 4 ani și 2 luni și interzicerea dreptului de a profesa ca profesor timp de 5 ani după executarea pedepsei.",
                 "Status": "Condamnare cu executare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
                 }
@@ -544,7 +544,7 @@
                 
                 "Justiție": "<strong style='color: red;'>condamnat</strong> în prima instanță la 4 ani și 8 luni de închisoare cu executare. I s-a interzis să se apropie de victimă și să fie ales în autoritățile publice sau în orice funcție publică, dar nu i s-a interzis să fie profesor. Profesorul a făcut apel, dar sentința a fost menținută.",
                 "Status": "Condamnare cu executare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
                 }
@@ -589,7 +589,7 @@
                 
                 "Justiție": "Prima instanță l-a <strong style='color: red;'>condamnat</strong> la 8 ani de închisoare și i-a interzis să ocupe vreo funcție publică pentru 5 ani de la executarea pedepsei. Curtea de Apel i-a majorat pedeapsa la 10 ani de închisoare. Judecătorii Curții de Apel au motivat majorarea pedepsei spunând că profesorul a profitat de „persoane minore extrem de vulnerabile, aspect care relevă gradul de degradare morală în care acesta se află” și au menționat că inculpatul e „o persoană lipsită de orice scrupule și repere morale” care pune mai presus de orice „comportamentul său sexual deviant”.",
                 "Status": "Condamnare cu executare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
                 }
@@ -610,7 +610,7 @@
                 
                 "Justiție": "Poliția s-a autosesizat. Profesoara a făcut un acord de recunoaștere a vinovăției și a fost <strong style='color: red;'>condamnat</strong>ă la 2 ani de închisoare cu suspendare și la prestare a muncii în folosul comunității la Spitalul din Alba Iulia sau la Primăria Ciugud. I s-a interzis să fie aleasă în funcții publice.",
                 "Status": "Condamnare cu suspendare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal + <a href='https://www.mediafax.ro/social/scandal-la-o-scoala-din-alba-profesoara-de-engleza-cercetata-pentru-ca-ar-fi-intretinut-relatii-sexuale-cu-un-elev-de-14-ani-17875661' style='color: red;'>Mediafax</a>",
                 "Sursa info": "Dosar instanță + presă"
                 }
@@ -632,7 +632,7 @@
                 
                 "Justiție": "<strong style='color: red;'>condamnat</strong> în prima instanță la 13 ani și 4 luni de închisoare; i s-a interzis să fie ales în funcții publice, i s-au interzis drepturile părintești, dreptul de a fi tutore sau curator și i s-a interzis să se apropie de victime. Instanța le-a acordat victimelor daune morale de 650.000 lei. A făcut apel, dar acesta a fost respins.",
                 "Status": "Condamnare cu executare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal + <a href='https://tvrinfo.ro/un-profesor-de-sport-din-jude-ul-tulcea-a-fost-arestat-pentru-ca-ar-fi-abuzat-sexual-trei-eleve_870045/#view' style='color: red;'>TVRInfo</a>",
                 "Sursa info": "Dosar instanță + presă"
                 }
@@ -653,7 +653,7 @@
                 
                 "Justiție": "A semnat cu procurorii un acord pentru recunoașterea vinovăției și a fost <strong style='color: red;'>condamnat</strong> la 1 an și 10 luni de închisoare cu suspendare și obligat să presteze muncă în folosul comunității la Consiliul Local Iași. Nu i s-a interzis să fie profesor.",
                 "Status": "Condamnare cu suspendare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
                 }
@@ -674,7 +674,7 @@
                 
                 "Justiție": "<strong style='color: red;'>condamnat</strong> la 7 ani de închisoare pentru viol și la plata a 15.000 de euro daune morale și la cheltuieli judiciare pentru victimă. Timp de 4 ani, profesorul nu are voie să ia legătura sau să se apropie de elevă la o distanță mai mică de 100 de metri. Nu va mai avea voie să lucreze în învățământ și nici în domenii de activitate care presupun contactul cu copii sau persoane vârstnice.",
                 "Status": "Condamnare cu executare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal + <a href='https://www.monitorulbt.ro/prima-pagina/2018/09/11/profesor-acuzat-de-viol/' style='color: red;'>Monitorul de Botoșani</a>",
                 "Sursa info": "Dosar instanță + presă"
                 }
@@ -696,7 +696,7 @@
                 "Reacție politică": "Primarul: „E foarte urât ce s-a întâmplat. (...) Noi nu vrem, sub nicio formă, să mușamalizăm cazul. În momentul în care vom primi, oficial, rezultatul testului de paternitate, se vor lua măsuri prin consiliul de administrație al școlii”",
                 "Justiție": "<strong style='color: red;'>condamnat</strong> în primă instanță la doi ani de închisoare cu suspendare pentru act sexual cu un minor. Instanța i-a interzis să ocupe funcții publice sau să fie profesor pentru doi ani de la executarea pedepsei și l-a obligat să plătească 10.000 de lei către familia victimei. Familia victimei a făcut apel împotriva sentinței, dar apelul a fost respins.",
                 "Status": "Condamnare cu suspendare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal + <a href='https://alba24.ro/fost-profesor-de-religie-din-alba-care-a-lasat-gravida-o-eleva-in-internatul-unui-liceu-condamnat-la-inchisoare-cu-suspendare-829932.html' style='color: red;'>Alba24</a>",
                 "Sursa info": "Dosar instanță + presă"
                 }
@@ -717,7 +717,7 @@
                 
                 "Justiție": "<strong style='color: red;'>condamnat</strong> la 7 ani de închisoare în primă instanță. La apel, sentința a fost redusă la 3 ani de închisoare cu suspendare. Profesorul trebuie să plătească daune morale de 40 de mii de lei victimei. Judecătorii au argumentat că profesorul este bătrân și nu are antecedente penale.",
                 "Status": "Condamnare cu suspendare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
                 }
@@ -739,7 +739,7 @@
                 
                 "Justiție": "Instanța urmează să se pronunțe.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -760,7 +760,7 @@
                 
                 "Justiție": "<strong style='color: red;'>condamnat</strong> în primă instanță la 2 ani de închisoare cu suspendare. Termenul de supraveghere este de 3 ani, iar în timpul ăsta trebuie să lucreze 100 de zile în folosul comunității. Trebuie să îi plătească victimei cheltuieli de judecată.",
                 "Status": "Condamnare cu suspendare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -782,7 +782,7 @@
                 
                 "Justiție": "Instanța urmează să se pronunțe.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -803,7 +803,7 @@
                 
                 "Justiție": "A fost <strong style='color: red;'>condamnat</strong> la 2 ani de închisoare cu suspendare, dar la apel pedeapsa a fost schimbată în 5 ani de închisoare cu executare. A ajuns în penitenciar în noiembrie 2017 și în februarie 2020 a fost eliberat condiționat.",
                 "Status": "Condamnare cu suspendare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal + <a href='https://www.pandurul.ro/articol/profesorul-pedofil-in-libertate-copila-abuzata-in-_121496.html' style='color: red;'>Pandurul</a>",
                 "Sursa info": "Dosar instanță + presă"
             }
@@ -825,7 +825,7 @@
                 
                 "Justiție": "<strong style='color: red;'>condamnat</strong> la 2 ani și 3 luni de închisoare cu suspendare. I s-a interzis să fie profesor pe o perioadă de 2 ani. Profesorul trebuie să îi plătească victimei 15.000 de euro.",
                 "Status": "Condamnare cu suspendare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal + <a href='https://adevarul.ro/stiri-interne/evenimente/povestea-profesorului-de-muzica-ce-si-a-santajat-1783537.html' style='color: red;'>Adevărul</a>",
                 "Sursa info": "Dosar instanță + presă"
             }
@@ -846,7 +846,7 @@
                 
                 "Justiție": "<strong style='color: red;'>condamnat</strong> în prima instanță la 1 an și 6 luni de închisoare cu suspendare. I s-a interzis să fie profesor pe o perioadă de 4 ani. La apel pedeapsa a fost schimbată în 1 an și 2 luni de închisoare cu suspendare, iar termenul de supraveghere a fost înjumătățit.",
                 "Status": "Condamnare cu suspendare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal + Dosar penal + <a href='https://www.libertatea.ro/stiri/ce-au-decis-judecatorii-in-cazul-profesorului-din-dolj-care-a-invitat-o-eleva-sa-dea-testul-de-istorie-la-el-acasa-cu-picioarele-desfacute-4533300' style='color: red;'>Libertatea</a>",
                 "Sursa info": "Dosar instanță + presă"
             }
@@ -867,7 +867,7 @@
                 
                 "Justiție": "Instanța urmează să se pronunțe.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal + <a href='https://stirileprotv.ro/stiri/actualitate/profesor-din-bals-arestat-pentru-o-relatie-cu-o-eleva-de-clasa-a-ix-a-traiau-impreuna-de-sase-luni.html' style='color: red;'>Știrile PRO TV</a>",
                 "Sursa info": "Dosar instanță + presă"
             }
@@ -889,7 +889,7 @@
                 "Reacție politică": "PSD Teleorman l-a exclus din partid.",
                 "Justiție": "Instanța urmează să se pronunțe.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal + <a href='https://investigatoria.ro/2022/11/04/exclusiv-fostul-vicepresedinte-al-consiliului-judetean-teleorman-acuzat-de-apropieri-nefiresti-cu-elevele-sale/' style='color: red;'>Investigatoria</a>",
                 "Sursa info": "Dosar instanță + presă"
             }
@@ -910,7 +910,7 @@
                 
                 "Justiție": "<strong style='color: red;'>condamnat</strong> în prima instanță la 5 ani și 8 luni de închisoare. I s-a interzis să mai ocupe funcția de profesor timp de 5 ani și trebuie să le plătească celor trei victime câte 1.000 de lei daune materiale, 50.000 de lei daune materiale și cheltuieli de judecată. A făcut apel, dar a fost respins, iar instanța l-a <strong style='color: red;'>condamnat</strong> să plătească încă 1000 de lei către victime - cheltuieli de judecată.",
                 "Status": "Condamnare cu executare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -932,7 +932,7 @@
                 
                 "Justiție": "A fost <strong style='color: red;'>condamnat</strong> în prima instanță la 12 ani și 8 luni de închisoare și i s-a interzis să ocupe funcția de profesor și l-a obligat să plătească daune morale în valoare de 20.000 euro pentru fiecare victimă. Profesorul a cerut strămutarea procesului, recuzarea procurorului și a judecătorului și o schimbare a încadrării juridice. Dosarul a ajuns în apel. Agresorul le-a dat în judecată pe victime și le-a cerut pretenții. Dosarul încă se judecă. A dat în judecată liceul, IPJ Constanța, Ministerul Educației, DGASPC Constanța și Parchetul de pe lângă Judecătoria Medgidia pentru a împărți daunele morale pentru victimele sale, dar a renunțat la proces.  A dat în judecată Tribunalul, Inspecția Judiciară și Statul Român pentru „reparare prejudicii erori judiciare”. Dosarul a fost suspendat.",
                 "Status": "Condamnare cu executare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal + <a href='https://www.replicaonline.ro/profesorul-de-la-liceul-din-dobromir-acuzat-de-corupere-sexuala-a-minorilor-se-ascunde-in-spatele-proceselor-570270' style='color: red;'>ReplicaOnline</a>",
                 "Sursa info": "Dosar instanță + presă"
             }
@@ -954,7 +954,7 @@
                 
                 "Justiție": "Curtea de apel i-a redus pedeapsa la 3 ani de închisoare cu executare. Instanța a descris fapta ca „act sexual normal consimțit cu eleva minoră de 15 ani”.",
                 "Status": "Condamnare cu executare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -975,7 +975,7 @@
                 
                 "Justiție": "Lectorul contestă decizia universității în instanță. Pierde și în fond, și la apel.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -996,7 +996,7 @@
                 
                 "Justiție": "Instanța a refuzat cererea profesorului și a menținut decizia de concediere luată de liceu, dar a spus că nu contează „vârsta destinatarului fotografiei”,  ci faptul că profesorul nu ar fi trebuit să apară în astfel de ipostaze.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -1017,7 +1017,7 @@
                 
                 "Justiție": "Judecătorii l-au <strong style='color: red;'>condamnat</strong> la 3 ani de închisoare cu suspendare și muncă în folosul comunității pentru luare de mită și pentru folosirea funcției în scop sexual și i-au interzis dreptul de a fi profesor pe o perioadă de 5 ani de la emiterea sentinței definitive.",
                 "Status": "Condamnare cu suspendare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -1039,7 +1039,7 @@
                 
                 "Justiție": "Prima instanță l-a <strong style='color: red;'>condamnat</strong> pe profesor la un an de închisoare cu suspendare și l-a obligat să meargă la programe de reintegrare socială și să lucreze în folosul comunității la Primăria Bascov. Parchetul de pe lângă Judecătoria Pitești a formulat apel împotriva sentinței și a cerut ca inculpatului să îi fie interzis să lucreze ca profesor pe o perioadă de un an, iar Curtea de Apel a admis cererea.",
                 "Status": "Condamnare cu suspendare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -1060,7 +1060,7 @@
                 
                 "Justiție": "Instanța a refuzat cererea profesorului și a menținut decizia de sancționare. Profesorul a făcut apel, dar a pierdut.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -1082,7 +1082,7 @@
                 
                 "Justiție": "Profesorul a cerut anularea deciziei de concediere și a argumentat că făcea glume cu tentă sexuală ca să le scoată pe studente din zona de confort și că nu le-a agresat fizic, ci a încercat să le demonstreze mai multe tehnici de autoapărare. Cererea lui a fost respinsă și în fond, și la apel, iar decizia de concediere a fost menținută.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -1103,7 +1103,7 @@
                 
                 "Justiție": "Instanța l-a <strong style='color: red;'>condamnat</strong> la un an de închisoare cu suspendare și i-a interzis să profeseze ca profesor/director pe o perioadă de trei ani.",
                 "Status": "Condamnare cu suspendare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -1125,7 +1125,7 @@
                 
                 "Justiție": "Instanța a refuzat cererea profesorului și a spus că decizia de concediere este validă și că nu se poate dovedi că școala a refuzat să îi comunice informațiile de interes public cerute. Profesorul a făcut recurs, dar instanța l-a refuzat încă o dată.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -1147,7 +1147,7 @@
                 
                 "Justiție": "În prima instanță,Tribunalul a refuzat cererea profesorului și a menținut decizia de sancționare. Profesorul a făcut apel, iar Curtea i-a dat dreptate și a spus că decizia de sancționare trebuie anulată pentru că profesorul nu a fost înștiințat că poate să conteste decizia în instanță, dar a refuzat să îi acorde daunele morale pe care le cerea.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -1168,7 +1168,7 @@
                 
                 "Justiție": "Procurorii au clasat dosarul în care profesorul era cercetat pentru corupere sexuală a minorilor.Profesorul a cerut anularea deciziei de sancționare, dar și daune morale. Cererea sa a fost respinsă și de instanța de fond, și de curtea de apel.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -1189,7 +1189,7 @@
                 
                 "Justiție": "În cazul elevei care a întreținut relații sexuale cu profesorul, instanța a spus că „aceasta nu reprezintă o probă certă de vinovăţie, având în vedere că nu a existat o promisiune expresă din partea inculpatului și nici o pretinsă influență a acestuia față de anumiţi funcţionari publici, fiind vorba doar de simpla percepţie a martorei cu privire la un eventual ajutor din partea inculpatului. De asemenea, aceasta nu face referire la vreo sumă de bani acordată profesorului”, dar a spus că faptul că profesorul a pretins favoruri sexuale din partea elevelor este un „comportament incompatibil cu etica profesiei de dascăl”. Prima instanță l-a <strong style='color: red;'>condamnat</strong> la 4 ani de închisoare cu executare și i-a interzis să profeseze în vreo unitate de invățământ timp de 4 ani, dar la apel pedeapsa a fost redusă la 3 ani de închisoare cu executare și interzicerea profesării în vreo unitate de învățământ timp de 3 ani.",
                 "Status": "Condamnare cu executare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -1211,7 +1211,7 @@
                 
                 "Justiție": "<strong style='color: red;'>condamnat</strong> în prima instanță la 10 ani și 8 luni de închisoare. I s-a interzis dreptul de a desfășura orice activități de instruire a minorilor care au sub 15 ani și a fost obligat să plătească daune morale de 10.000 de lei pentru fiecare victimă. A făcut apel și judecătorii i-au schimbat pedeapsa în 10 ani de închisoare.",
                 "Status": "Condamnare cu executare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -1232,7 +1232,7 @@
                 
                 "Justiție": "Instanța l-a <strong style='color: red;'>condamnat</strong> la 3 ani de închisoare cu suspendare și i-a interzis dreptul să fie profesor pentru 4 ani. L-a obligat să le plătească victimelor despăgubiri de 10.000, respectiv 15.000 de lei. A făcut apel, dar a fost respins. A încercat să atace și pedeapsa complementară prin care i s-a interzis să mai fie profesor, dar a pierdut.",
                 "Status": "Condamnare cu suspendare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -1253,7 +1253,7 @@
                 
                 "Justiție": "A fost <strong style='color: red;'>condamnat</strong> la 2 ani și 11 luni de închisoare cu suspendare. I s-a interzis să fie profesor pentru un an.",
                 "Status": "Condamnare cu suspendare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -1275,7 +1275,7 @@
                 
                 "Justiție": "<strong style='color: red;'>condamnat</strong> de prima instanță la 5 ani de închisoare. i s-a interzis să mai fie profesor pe o perioadă de 5 ani după executarea pedepsei. Trebuie să plătească daune morale de câte 10.000 lei către trei din cele patru victime și cheltuieli de judecată.",
                 "Status": "Condamnare cu executare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -1296,7 +1296,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -1317,7 +1317,7 @@
                 
                 "Justiție": "<strong style='color: red;'>condamnat</strong> în primă instanță la 7 ani de închisoare. I s-a interzis să dea meditații și să fie profesor pe o perioadă de patru ani. Pus să plătească 20.000 lei daune morale și cheltuieli de judecată. A făcut apel, dar l-a retras.",
                 "Status": "Condamnare cu executare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -1339,7 +1339,7 @@
                 
                 "Justiție": "<strong style='color: red;'>condamnat</strong> de Judecătoria Sector 3 la 3 ani și 6 luni de închisoare cu executare pentru agresiune sexuală. Atât el, cât și școala, obligați să plătească victimei 4.950 lei daune materiale, contravaloarea ședințelor de psihoterapie ale victimei, 50 de mii lei daune morale și cheltuieli de judecată. A fost eliberat condiționat în mai 2022, dupa 3 ani și 2 luni.",
                 "Status": "Condamnare cu executare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal + <a href='https://www.digi24.ro/stiri/actualitate/justitie/eleva-agresata-de-profesor-ruda-a-fetei-a-fost-atrasa-sub-pretextul-de-a-i-se-oferi-chec-905593' style='color: red;'>Digi24</a>",
                 "Sursa info": "Dosar instanță + presă"
             }
@@ -1360,7 +1360,7 @@
                 
                 "Justiție": "În hotărâre, instanța a ținut să menționeze că „minora nu a încetat conversația, ci a alimentat-o de mai multe ori”. În prima instanță, profesorul a fost <strong style='color: red;'>condamnat</strong> la 1 an și 6 luni de închisoare cu suspendare și i s-a interzis să mai ocupe funcția de profesor și să se mai apropie la 20 de metri de victimă și de locuința ei și a fost obligat să lucreze 100 de zile în folosul comunității. Victima i-a cerut daune morale și cheltuieli de judecată în valoare de 20.000 lei, dar instanța a acordat doar 5.000 de lei. A primit un termen de supraveghere de 4 ani. Inculpatul a făcut apel, dar Curtea de Apel Pitești l-a respins și a menținut sentința din fond.",
                 "Status": "Condamnare cu suspendare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Dosar penal",
                 "Sursa info": "Dosar instanță"
             }
@@ -1382,7 +1382,7 @@
                 
                 "Justiție": "Verificări în curs",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://adevarul.ro/stiri-interne/educatie/profesor-de-la-liceul-jean-monnet-din-bucuresti-2134850.html#gallery_currentImage' style='color: red;'>Adevărul</a>",
                 "Sursa info": "Presă"
             }
@@ -1403,7 +1403,7 @@
                 
                 "Justiție": "Conform directorului, părinții victimei au decis ca poliția să nu fie implicată.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.stiridecluj.ro/social/o-eleva-de-la-un-camin-din-cluj-napoca-acuza-ca-a-fost-hartuita-sexual-de-pedagog-am-scapat-cu-promisiunea-ca-ma-voi-revansa-exclusiv' style='color: red;'>Știri de Cluj</a>",
                 "Sursa info": "Presă"
             }
@@ -1426,7 +1426,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://observatornews.ro/eveniment/profesorul-care-a-dansat-lasciv-in-fata-copiilor-in-tabara-nu-isi-aduce-aminte-ca-ar-fi-atins-nepotrivit-o-eleva-scoala-ar-fi-musamalizat-intamplarea-434466.html' style='color: red;'>Observator</a>",
                 "Sursa info": "Presă"
             }
@@ -1447,7 +1447,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://adevarul.ro/stiri-locale/iasi/invatator-acuzat-ca-si-hartuieste-sexual-elevele-1996440.html' style='color: red;'>Adevărul</a>",
                 "Sursa info": "Presă"
             }
@@ -1468,7 +1468,7 @@
                 "Reacție politică": "Primarul: „Dirigintele a aflat de la copii că el este exagerat de lipicios, ca să nu folosesc nişte termeni mai duri sau mai răi, în sensul că îi mângâie, îi atinge, lucruri total nefireşti. Ideea e că un asemenea comportament trebuie ucis din faşă”.",
                 "Justiție": "Poliția s-a autosesizat.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://stirileprotv.ro/stiri/actualitate/profesor-de-29-de-ani-din-dambovita-acuzat-ca-abuzeaza-sexual-copiii-la-scoala.html' style='color: red;'>Știrile PRO TV & Adevărul</a>",
                 "Sursa info": "Presă"
             }
@@ -1489,7 +1489,7 @@
                 
                 "Justiție": "Poliția s-a autosesizat.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.observatorulph.ro/exclusiv/2596792-profesor-din-mizil-acuzat-ca-ar-fi-avut-conversatii-cu-tenta-sexuala-pe-whatsapp-cu-o-eleva-reactia-conducerii-liceului-teoretic-grigore-tocilescu' style='color: red;'>Observatorul Prahovean</a>",
                 "Sursa info": "Presă"
             }
@@ -1510,7 +1510,7 @@
                 
                 "Justiție": "Dosar penal",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.libertatea.ro/stiri/profesoara-din-timis-indragostita-de-un-elev-de-16-ani-acuzata-de-act-sexual-cu-un-minor-risca-pana-la-7-ani-de-inchisoare-2243902' style='color: red;'>Libertatea</a>",
                 "Sursa info": "Presă"
             }
@@ -1531,7 +1531,7 @@
                 
                 "Justiție": "Poliția a fost sesizată.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.digi24.ro/stiri/actualitate/educatie/video-profesor-de-engleza-din-maramures-filmat-in-timp-ce-saruta-o-eleva-in-fata-clasei-938970' style='color: red;'>Digi24</a>",
                 "Sursa info": "Presă"
             }
@@ -1552,7 +1552,7 @@
                 "Reacție politică": "Ministrul Educației a refuzat să o numească inspector în Vrancea. În 2021, fosta directoare a fost propusă inspector școlar pentru Arte.",
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://observatornews.ro/eveniment/profesoara-dragoste-elev-focsani-fotografii-252965.html' style='color: red;'>Observatorul de Vrancea</a>",
                 "Sursa info": "Presă"
             }
@@ -1573,7 +1573,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://observatornews.ro/eveniment/profesor-din-valcea-inregistrat-afirmand-ca-barbatii-sunt-dumnezeu-pe-pamantul-asta-iar-femeile-sunt-handicapate-cum-se-apara-elevii-il-sustin-455446.html' style='color: red;'>Observator</a>",
                 "Sursa info": "Presă"
             }
@@ -1615,7 +1615,7 @@
                 
                 "Justiție": "Dosar penal, in rem, față de infracțiunea de hărțuire sexuală, nu faţă de persoană.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.g4media.ro/profesor-aradean-cercetat-pentru-hartuire-dupa-ce-ar-fi-trimis-unei-eleve-de-16-ani-mesaje-cu-tenta-sexuala-barbatul-este-profesor-de-sport-si-arbitru-de-fotbal.html' style='color: red;'>G4Media Aradon</a>",
                 "Sursa info": "Presă"
             }
@@ -1636,7 +1636,7 @@
                 
                 "Justiție": "Dosar penal",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://gorjtv.ro/2020/11/17/profesor-din-lps-cercetat-pentru-act-sexual-cu-o-minora/' style='color: red;'>Gorj TV</a>",
                 "Sursa info": "Presă"
             }
@@ -1657,7 +1657,7 @@
                 "Reacție politică": "Ministrul Educației: „Şi părinţii, şi elevii ar trebui să fie mai atenţi din punctul acesta de vedere.”",
                 "Justiție": "Dosar penal",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://stirileprotv.ro/stiri/actualitate/profesor-de-istorie-retinut-pentru-ca-si-a-fotografiat-elevii-in-ipostaze-compromitatoare.html' style='color: red;'>Știrile PROTV</a>",
                 "Sursa info": "Presă"
             }
@@ -1699,7 +1699,7 @@
                 "Reacție politică": "Ministrul Educației i-a cerut profesorului demisia: „Și pentru mine sunt șocante imaginile. (...) S-a deschis o anchetă.”",
                 "Justiție": "Dosar penal. Avocatul susține că „se scărpina în urma unei mâncărimi“.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://adevarul.ro/stiri-interne/educatie/cazul-profesorului-de-religie-acuzat-ca-s-a-1838058.html' style='color: red;'>Adevărul</a>",
                 "Sursa info": "Presă"
             }
@@ -1720,7 +1720,7 @@
                 
                 "Justiție": "Purtăror de cuvânt IPJ Teleorman: „Dosarul e în lucru. Vorbim despre un comportament inadecvat al unui cadru didactic, înțeleg că practic a fost vorba de o îmbrățișare.”",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://liberinteleorman.ro/o-eleva-din-teleorman-sustine-ca-a-fost-hartuita-sexual-in-biblioteca-scolii-de-profesorul-ei/' style='color: red;'>Liber în Teleorman</a>",
                 "Sursa info": "Presă"
                 }
@@ -1741,7 +1741,7 @@
                 
                 "Justiție": "Sesizată, a audiat profesorul.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://resita.ro/panica-la-oravita-un-profesor-hartuieste-online-eleve-si-pe-colegele-sale/' style='color: red;'>Reșița.ro</a>",
                 "Sursa info": "Presă"
             }
@@ -1867,7 +1867,7 @@
                 
                 "Justiție": "Eleva a depus plângere. Se fac cercetări.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://realitateadevrancea.net/un-nou-scandal-la-colegiul-emil-botta-din-adjud-o-eleva-de-16-ani-isi-acuza-profesorul-de-hartuire-sexuala/' style='color: red;'>Realitatea de Vrancea</a>",
                 "Sursa info": "Presă"
             }
@@ -1888,7 +1888,7 @@
                 
                 "Justiție": "Dosar penal",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.monitorfg.ro/2019/12/04/ce-se-asteapta-alexandra-sa-fie-violata-profesor-de-la-scoala-din-voila-acuzat-de-parinti-de-comportament-neadecvat-am-simtit-ca-nu-mai-sunt-eu-spune-profesorul/' style='color: red;'>Monitorul de Făgăraș</a>",
                 "Sursa info": "Presă"
             }
@@ -1909,7 +1909,7 @@
                 "Reacție politică": "Primarul ține o ședință cu directorii de școală. Începe să fie covins că știau, dar „n-au vrut să zică”. Face o sesizare la Poliția Codlea.",
                 "Justiție": "Dosar penal, cercetări in rem",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://recorder.ro/conjuratia-minciunii-cum-acopera-scoala-romaneasca-un-profesor-care-si-corupe-sexual-elevele-minore/' style='color: red;'>Recorder</a>",
                 "Sursa info": "Presă"
             }
@@ -1930,7 +1930,7 @@
                 "Reacție politică": "Primarul: „Am vorbit cu el şi spune că nu este adevărat nimic, fiind vorba de o răzbunare deoarece le-a pus absenţe nemotivate întrucât nu se duc la şcoală. Nu ştiu adevărul adevărat. Dacă te gândeşti şi la cine reclamă. Sunt de altă calitate. Eu le-am văzut pe acele fete fumând în clasă, le-am văzut la baruri în timp ce consumau bere. Trebuie să vedem ce stabileşte ancheta. Poate să fie oricum aceste fete, dar dacă el a făcut ceea ce este acuzat, atunci să plătească.”",
                 "Justiție": "Dosar penal",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://adevarul.ro/stiri-locale/targu-jiu/profesor-de-educatie-fizica-acuzat-de-coruperea-2159858.html' style='color: red;'>Adevărul</a>",
                 "Sursa info": "Presă"
             }
@@ -1951,7 +1951,7 @@
                 
                 "Justiție": "Poliția a verificat camerele de supraveghere.Profesorul a depus și el plângere, pentru denigrare.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.observatorulph.ro/exclusiv/2637683-profesor-acuzat-de-hartuire-sexuala-se-intampla-la-o-scoala-din-comuna-adunati-dascalul-sustine-ca-totul-este-o-inscenare-si-a-facut-plangere-la-politie' style='color: red;'>Observatorul Prahovean</a>",
                 "Sursa info": "Presă"
             }
@@ -1972,7 +1972,7 @@
                 "Reacție politică": "Ministrul Educației: „Îndrăznesc să cred că sunt efecte secundare ale perioadei de criză pandemică. Profesorul nu e la prima abatere, nu e singura abatere reclamată, e vorba și că a transmis unor părinți rezultatele școlare ale altor elevi. Aceste lucruri sunt în analiză la nivelul inspectoratului și al Corpului de control. Am cerut să meargă corpul de control la Școala centrală, pentru a verifica situația. E un exemplu regretabil și trebuie să beneficieze de măsuri în consecință”. Anchetele disciplinare promise de ministrul educaţiei „nu s-au putut derula”. Profesorul încă predă la școală, dar la alte clase.",
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.libertatea.ro/stiri/profesorul-in-lenjerie-intima-de-la-scoala-centrala-revine-la-catedra-anchetele-disciplinare-promise-de-ministrul-educatiei-nu-s-au-putut-derula-3761174' style='color: red;'>Libertatea</a>",
                 "Sursa info": "Presă"
             }
@@ -1993,7 +1993,7 @@
                 
                 "Justiție": "Dosarul penal încă se judecă.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://stirileprotv.ro/stiri/actualitate/instructor-de-dans-din-dambovita-acuzat-ca-a-agresat-sexual-o-copila-a-fost-arestat-preventiv.html' style='color: red;'>Știrile PRO TV</a>",
                 "Sursa info": "Presă"
             }
@@ -2014,7 +2014,7 @@
                 
                 "Justiție": "Dosar penal",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.ziuadevest.ro/profesor-de-sport-arestat-sub-acuzatia-de-viol-si-corupere-de-minori/' style='color: red;'>Ziua de Vest</a>",
                 "Sursa info": "Presă"
             }
@@ -2035,7 +2035,7 @@
                 
                 "Justiție": "Dosar penal",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://ziaruldebacau.ro/profesor-de-la-pedagogic-acuzat-de-gesturi-nepermise-fata-de-eleve-dascalul-nu-este-la-prima-abatere-inspectoratul-scolar-si-politia-au-deschis-o-ancheta/' style='color: red;'>Ziarul de Bacău</a>",
                 "Sursa info": "Presă"
             }
@@ -2056,7 +2056,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.youtube.com/watch?v=-FDlQN5ZjJA' style='color: red;'>The Pressure</a>",
                 "Sursa info": "Presă"
             }
@@ -2140,7 +2140,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://stirileprotv.ro/stiri/actualitate/scena-revoltatoare-intr-o-scoala-din-salaj-un-profesor-de-sport-este-anchetat-dupa-ce-le-a-aratat-zona-genitala-unor-eleve.html' style='color: red;'>Știrile PRO TV</a>",
                 "Sursa info": "Presă"
             }
@@ -2161,7 +2161,7 @@
                 "Reacție politică": "Primarul a cerut o anchetă. Prefectul a solicitat Ministerului Educației măsuri imediate și ferme pentru ca vinovații să fie trași la răspundere: „Este inadmisibil ca despre comportamentul incriminatoriu al unui cadru didactic, Instituția Prefectului să afle informații din mass media, în condițiile în care Inspectoratul Școlar Județean avea cunoștință despre acest caz, cu o zi înainte de a fi făcut public. Lipsa de reacție a conducerii ISJ este evidentă, fiind constituită comisia de anchetă la mai mult de 24 de ore de la aflarea detaliilor despre această stare de fapt”.",
                 "Justiție": "Poliția s-a autosesizat, dosar penal",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.libertatea.ro/stiri/anchete-la-doua-licee-din-hunedoara-dupa-ce-un-profesor-a-trimis-imagini-obscene-unei-eleve-prefectul-cere-explicatii-inspectoratului-scolar-4297220' style='color: red;'>Libertatea</a>",
                 "Sursa info": "Presă"
             }
@@ -2182,7 +2182,7 @@
                 
                 "Justiție": "Poliția s-a autosesizat, dosar penal",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.aradon.ro/aradon-stirile-judetului-arad/profesor-de-religie-din-arad-despre-o-eleva-nu-ar-viola-o-nimeni-nici-pe-bani-1604648/' style='color: red;'>Aradon</a>",
                 "Sursa info": "Presă"
             }
@@ -2203,7 +2203,7 @@
                 
                 "Justiție": "Poliția s-a autosesizat.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://adevarul.ro/stiri-locale/pitesti/profesor-de-religie-acuzat-de-abuz-sexual-s-a-2212608.html' style='color: red;'>Adevărul & Ziarul Argeșul</a>",
                 "Sursa info": "Presă"
             }
@@ -2224,7 +2224,7 @@
                 "Reacție politică": "În martie 2023 câștigă un concurs de director al Centrului Județean pentru Conservarea și promovarea culturii tradiționale Gorj. Este validat de consilierii județeni, în unanimitate. Primește aviz favorabil și din partea Comisiei pentru învățământ, cultură și culte din cadrul Consiliului Județean Gorj.",
                 "Justiție": "Poliția s-a autosesizat, dosar penal. Acum se judecă dosarul în care a contestat decizia de concediere luată de liceu.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://stirileprotv.ro/stiri/actualitate/preot-de-seminar-dat-afara-dupa-mesajele-date-in-miez-de-noapte-unei-eleve-minore-zsotia-mea-doarme.html&sa=D&source=editors&ust=1704038660080986&usg=AOvVaw3DvB4qqpmx4NxtXgGZJ6zJ' style='color: red;'>Știrile PRO TV și Gorjeanul</a>",
                 "Sursa info": "Presă"
             }
@@ -2245,7 +2245,7 @@
                 
                 "Justiție": "Dosar penal",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://stirileprotv.ro/stiri/actualitate/un-profesor-din-gorj-este-anchetat-de-politisti-dupa-ce-ar-fi-agresat-sexual-o-eleva-cu-care-facea-meditatii.html' style='color: red;'>Știrile PRO TV</a>",
                 "Sursa info": "Presă"
             }
@@ -2265,7 +2265,7 @@
                 
                 "Justiție": "Dosarul penal încă se judecă. E cercetat în libertate. Au stabilit că minora ar fi întreținut relații sexuale consimțite. Trimis în judecată. În februarie 2023 a fost pus sub control judiciar de Judecătoria Târgu Jiu. Sentința nu este definitivă.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.gds.ro/Actualitate/2023-02-01/gorj-profesor-de-informatica-retinut-dupa-ce-ar-fi-facut-sex-cu-o-eleva-in-varsta-de-16-ani/' style='color: red;'>Gazeta de sud & Gorj Online</a>",
                 "Sursa info": "Presă"
             }
@@ -2286,7 +2286,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.clujust.ro/asistentul-care-cauta-studente-virgine-face-ce-vrea-in-universitatea-lui-tata-un-avocat-cu-state-vechi-si-fost-deputat-psd/' style='color: red;'>Cluj Just</a>",
                 "Sursa info": "Presă"
             }
@@ -2307,7 +2307,7 @@
                 
                 "Justiție": "Dosarul penal încă se judecă.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://ziare.com/profesor/profesor-mehedinti-relatii-sexuale-eleva-bani-1792549' style='color: red;'>Ziare.com</a>",
                 "Sursa info": "Presă"
             }
@@ -2328,7 +2328,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.stiridecluj.ro/social/profesor-ubb-cluj-acuzat-ca-a-agresat-sexual-o-studenta-si-i-a-propus-sa-fie-iubita-lui-se-cauta-si-alte-victime-pentru-o-plangere' style='color: red;'>Știri de Cluj</a>",
                 "Sursa info": "Presă"
             }
@@ -2349,7 +2349,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://recorder.ro/toate-sunteti-ale-mele-arhidiaconul-si-elevele-de-la-seminar/' style='color: red;'>Recorder</a>",
                 "Sursa info": "Presă"
             }
@@ -2371,7 +2371,7 @@
                 
                 "Justiție": "Parchetul de pe lângă Judecătoria Piatra-Neamț i-a interzis dreptul de a exercita profesia de profesor pe durata controlului judiciar. Trimis în judecată în septembrie 2023.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://mesagerulneamt.ro/2023/04/soc-in-invatamantul-nemtean-inspector-scolar-general-adjunct-acuzat-de-infractiuni-sexuale/' style='color: red;'>Mesagerul de Neamț, Libertatea, Adevărul</a>",
                 "Sursa info": "Presă"
             }
@@ -2392,7 +2392,7 @@
                 
                 "Justiție": "Dosar penal, cercetări în rem, percheziții la domiciliu",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.realitatea.net/stiri/actual/un-consilier-local-si-profesor-acuzat-de-relatii-sexuale-cu-o-eleva_6447536b51610118076f87f2' style='color: red;'>Realitatea TV & Știrile PRO TV</a>",
                 "Sursa info": "Presă"
             }
@@ -2413,7 +2413,7 @@
                 
                 "Justiție": "Dosar penal. Reținut pentru 24 de ore, percheziții la domiciliu",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://adevarul.ro/stiri-locale/craiova/profesor-de-sport-din-craiova-fost-top-model-2263865.html' style='color: red;'>Adevărul</a>",
                 "Sursa info": "Presă"
             }
@@ -2434,7 +2434,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "O fostă elevă, acum în vârstă de 24 de ani, reclamă un profesor pentru aluzii cu caracter sexual, comentarii indecente, expunerea la fotografii cu conținut sexual explicit, discuții explicit sexuale, propuneri privind stabilirea unei întâlniri sau inițierea unei relații sexuale, atingeri nedorite, expunerea organelor genitale, stalking, oferirea drogurilor sau băuturilor alcoolice cu scopul pierderii cunoștinței sau a capacității de a oferi consimțământ. „Ne vorbea despre sex (la ore), cum trebuie să ne purtăm într-o relație”, „A închiriat un spațiu unde să desenăm, pe motiv că școala nu-i oferă condiții„, „Mi-a cerut să-i pozez nud”, „Mi-a arătat poze cu el când se masturba”, „Mi-a zis că vrea să mă învețe să fiu femeie, să mă dezbrac în fața lui și îmi promite că nu mă atinge”, „Ajunsese să mă sune de 20 de ori pe zi”.Încă o fostă elevă declară despre același profesor: „Mi-a propus să fiu model pentru un proiect care implica un aspect de virgină (...) o cămașă de noapte albă, semitransparentă”, „Mi-a sugerat să vin la el la atelier pentru lecții private (...) am spus că nu îmi permit (...) s-a apropiat de mine, blocându-mă, m-a mângâiat și mi-a spus că putem rezolva altfel doar noi doi, nu îl interesează banii”. Eleva s-a transferat la altă secție. Volumul mare de mărturii primite de RISE nu a permis echipei mici a proiectului să investigheze fiecare caz în parte. Le publicăm cu această mențiune, deoarece le considerăm relevante pentru a arăta amploarea fenomenului.",
+                "Mărturie culeasă de RISE": "O fostă elevă, acum în vârstă de 24 de ani, reclamă un profesor pentru aluzii cu caracter sexual, comentarii indecente, expunerea la fotografii cu conținut sexual explicit, discuții explicit sexuale, propuneri privind stabilirea unei întâlniri sau inițierea unei relații sexuale, atingeri nedorite, expunerea organelor genitale, stalking, oferirea drogurilor sau băuturilor alcoolice cu scopul pierderii cunoștinței sau a capacității de a oferi consimțământ. „Ne vorbea despre sex (la ore), cum trebuie să ne purtăm într-o relație”, „Mi-a cerut să-i pozez nud”, „Mi-a arătat poze cu el când se masturba”, „Mi-a zis că vrea să mă învețe să fiu femeie, să mă dezbrac în fața lui și îmi promite că nu mă atinge”, „Ajunsese să mă sune de 20 de ori pe zi”. Încă o fostă elevă declară despre același profesor: „Mi-a propus să fiu model pentru un proiect care implica un aspect de virgină (...) o cămașă de noapte albă, semitransparentă”, „Mi-a sugerat să vin la el pentru lecții private (...) am spus că nu îmi permit (...) s-a apropiat de mine, blocându-mă, m-a mângâiat și mi-a spus că putem rezolva altfel doar noi doi, nu îl interesează banii”. Eleva s-a transferat la altă clasă. Volumul mare de mărturii primite de RISE nu a permis echipei mici a proiectului să investigheze fiecare caz în parte. Le publicăm cu această mențiune, deoarece le considerăm relevante pentru a arăta amploarea fenomenului.",
                 "Sursa": "Formular Catedra de AbuzMail primit pe adresa catedradeabuz@gmail.com",
                 "Sursa info": "Formular"
             }
@@ -2455,7 +2455,7 @@
                 
                 "Justiție": "Dosar penal, control judiciarJudecătoria Drăgășani: Profesorul nu are voie să se deplaseze la unitatea şcolară în cauză, respectiv în curtea acesteia sau în sediul unităţii şcolare; profesorul nu are voie să se apropie de fată și familia ei la 50 de metri sau să comunice cu ei și nici să predea.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.gazetavalceana.ro/anchetedezvaluri/update-profesor-de-educatie-fizica-din-judetul-valcea-acuzat-de-acte-de-natura-sexuala-impotriva-unei-eleve/' style='color: red;'>Gazeta de Vâlcea și Știrile PRO TV</a>",
                 "Sursa info": "Presă"
             }
@@ -2476,7 +2476,7 @@
                 
                 "Justiție": "Parchetul s-a autosesizat și a deschis dosar penal. Profesorul a contestat în instanță decizia de concediere luată de universitate. Dosarul încă se judecă.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.brasov.net/acuzatii-grave-la-adresa-unui-profesor-de-la-universitatea-transilvania-din-brasov-doua-studente-au-reclamat-ca-ar-fi-fost-agresate-sexual-de-dascal-in-timpul-orelor-particulare-de-pregatire/' style='color: red;'>Brașov.net</a>",
                 "Sursa info": "Presă"
             }
@@ -2518,7 +2518,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.gandul.ro/exclusiv/exclusiv-profesor-universitar-la-ase-acuzat-de-discriminare-si-hartuire-sexuala-19997363' style='color: red;'>Gândul</a>",
                 "Sursa info": "Presă"
             }
@@ -2582,7 +2582,7 @@
                 
                 "Justiție": "Percheziții la domiciliu",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://vasiledale.ro/2023/10/25/absolut-halucinant-un-profesor-de-matematica-din-sighet-saltat-de-politisti-din-scoala-s-ar-fi-intalnit-prin-mesaje-cu-o-eleva-de-11-ani-intr-o-sala-de-clasa-exclusiv-video/' style='color: red;'>Vasiledale.ro</a>",
                 "Sursa info": "Presă"
             }
@@ -2603,7 +2603,7 @@
                 
                 "Justiție": "Dosar penal. Arest la domiciliu",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.stirilekanald.ro/video-dascalul-acuzat-ca-a-violat-o-eleva-neaga-acuzatiile-aduse-familia-elevei-de-9-ani-cere-dreptate-20354428' style='color: red;'>Știrile Kanal D & Sansa News</a>",
                 "Sursa info": "Presă"
             }
@@ -2624,7 +2624,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.riseproject.ro/investigations/investigatii/catedra-de-abuz-au-fost-niste-relatii-de-iubire/' style='color: red;'>Rise Project</a>+Formular Catedra de Abuz",
                 "Sursa info": "Formular"
             }
@@ -2645,7 +2645,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.riseproject.ro/investigations/investigatii/lectiile-regizorului-puiu-serban/' style='color: red;'>Rise Project</a>+Formular Catedra de Abuz",
                 "Sursa info": "Formular"
             }
@@ -2771,7 +2771,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.riseproject.ro/investigations/investigatii/lectiile-regizorului-puiu-serban/' style='color: red;'>Rise Project</a>+Formular Catedra de Abuz",
                 "Sursa info": "Presă"
             }
@@ -2792,7 +2792,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://observatornews.ro/eveniment/le-mai-trimiteam-elevilor-inimioare-dar-in-semn-de-prietenie-profesor-de-sport-din-satu-mare-acuzat-de-hartuire-de-doua-eleve-de-12-ani-552096.html' style='color: red;'>Observator</a>",
                 "Sursa info": "Presă"
             }
@@ -2814,7 +2814,7 @@
                 "Reacție politică": "Primarul: „Şi-a dat demisia din Consiliul Local acum două săptămâni. A fost o decizie în care argumentează că nu vrea să includă viaţa personală şi aspectele vieţii personale în activitatea Primăriei şi este bine că a făcut lucrul acesta. A renunţat şi la statutul de membru UDMR. (...) Bine a făcut lucrul acesta, pentru că este o situaţie foarte gravă. (...) Şi eu am fost şocat de ceea ce am citit în presă. (...) Ancheta instituţională trebuie făcută, pentru că este inadmisibil ca şcolile, în general, să închidă aceste informaţii în sânul corpurilor profesorale şi să nu facă anchetele interne.”",
                 "Justiție": "Dosar Penal. IPJ Harghita face cercetări, urmând ca la finalul acestora să fie dată o soluție prin Parchet.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://atlatszo.ro/eroviszonyok/szexualis-kihasznalas-csikszereda-marton-aron/' style='color: red;'>Átlátszó Erdély</a>",
                 "Sursa info": "Presă"
             }
@@ -2835,7 +2835,7 @@
                 
                 "Justiție": "Dosar penal",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://puls24.ro/un-profesor-din-floreni-acuzat-ca-ar-fi-abuzat-sexual-o-eleva-de-13-ani/' style='color: red;'>Plus 24</a>",
                 "Sursa info": "Presă"
             }
@@ -2856,7 +2856,7 @@
                 
                 "Justiție": "Dosar penal. Eleva a fost arestată pentru tentativă de omor.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "<a href='https://www.hotnews.ro/stiri-educatie-26713162-incident-grav-intr-liceu-din-oradea-pedagog-injunghiat-eleva-biroul-unui-director-scolii.htm' style='color: red;'>Hotnews</a>",
                 "Sursa info": "Presă"
             }
@@ -5586,7 +5586,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "RISE ProjectFormular Catedra de Abuz",
                 "Sursa info": "Formular"
             }
@@ -5859,7 +5859,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Ziarul de Iași",
                 "Sursa info": "Presă"
             }
@@ -5880,7 +5880,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Scena9",
                 "Sursa info": "Presă"
             }
@@ -5901,7 +5901,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Scena9",
                 "Sursa info": "Presă"
             }
@@ -5985,7 +5985,7 @@
                 
                 "Justiție": "Dosar penal, trimis în judecată. Judecătoria Șimleul Silvaniei a considerat însă că rechizitoriul este incomplet. Dosarul a fost retrimis la parchet pentru completarea datelor solicitate de instanță în 22 decembrie 2023.",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Ziare.com",
                 "Sursa info": "Presă"
             }
@@ -6006,7 +6006,7 @@
                 
                 
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "ProTV",
                 "Sursa info": "Presă"
             }
@@ -6027,7 +6027,7 @@
                 
                 "Justiție": "Poliția Municipiului Brașov face cercetări, dosar penal în rem",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Brașov.net",
                 "Sursa info": "Presă"
             }
@@ -6048,7 +6048,7 @@
                 
                 "Justiție": "Surse din Parchet: „S-a început urmărirea penală in rem. Urmează eventual să se treacă la urmărirea penală a acuzatului, ocazie cu care va fi audiat ca suspect. Dacă vor fi suficiente probe, va căpăta calitatea de inculpat şi va fi trimis în judecată”",
                 "Status": "Fără condamnare",
-                "Mărturie culeasă de RISE": "",
+                
                 "Sursa": "Ziarul de Iași",
                 "Sursa info": "Presă"
             }
@@ -6209,16 +6209,21 @@ function addMarkersToMap(locations) {
     });
 }
 
-// Function to dynamically update search hints based on user input
+// Helper function to normalize strings
+function normalizeString(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+// Modified updateSearchHints function
 function updateSearchHints() {
-    var query = document.getElementById('searchInput').value.toLowerCase();
+    var query = normalizeString(document.getElementById('searchInput').value.toLowerCase());
     var hints = document.getElementById('searchHints');
     hints.innerHTML = '';
 
     if (query.length > 2) {
         locations.forEach(location => {
-            const localitate = location.details["Localitate"] ? location.details["Localitate"].toLowerCase() : '';
-            const unitateInvatamant = location.details["Unitatea de învățământ a victimei"] ? location.details["Unitatea de învățământ a victimei"].toLowerCase() : '';
+            const localitate = location.details["Localitate"] ? normalizeString(location.details["Localitate"].toLowerCase()) : '';
+            const unitateInvatamant = location.details["Unitatea de învățământ a victimei"] ? normalizeString(location.details["Unitatea de învățământ a victimei"].toLowerCase()) : '';
 
             if (localitate.includes(query) || unitateInvatamant.includes(query)) {
                 var li = document.createElement('li');
@@ -6297,6 +6302,9 @@ document.getElementById('menu-icon').addEventListener('click', function() {
     menuContent.classList.toggle('active');
 });
 
+
+
+
 // Function to show a popup
 function showPopup(section) {
     var popupContent = {
@@ -6311,6 +6319,15 @@ function showPopup(section) {
     popup.innerHTML = `<span>${popupContent[section]}</span> <button onclick="this.parentNode.remove()">Închide</button>`;
     document.body.appendChild(popup);
 }
+
+// Set up event listeners for zoom controls
+document.getElementById('zoom-in').addEventListener('click', function() {
+    map.zoomIn(); // for Mapbox GL JS
+});
+
+document.getElementById('zoom-out').addEventListener('click', function() {
+    map.zoomOut(); // for Mapbox GL JS
+});
 
 map.on('load', function() {
     map.loadImage('marker.png', function(error, image) {
